@@ -1,0 +1,152 @@
+{
+    "layer": "top",
+    "position": "top",
+    "height": 40,
+    "margin-top": 5,
+    "margin-left": 10,
+    "margin-right": 10,
+    "spacing": 0,
+    
+    "modules-left": [
+        "hyprland/workspaces",
+        "mpris"
+    ],
+    "modules-center": [
+        "clock"
+    ],
+    "modules-right": [
+        "custom/updates",
+        "bluetooth",
+        "cpu",
+        "temperature",
+        "pulseaudio",
+        "network",
+        "battery#bat0",
+        "battery#bat1"
+    ],
+
+    "hyprland/workspaces": {
+        "disable-scroll": true,
+        "all-outputs": true,
+        "format": "{icon}",
+        "on-click": "activate",
+        "format-icons": {
+            "default": "",
+            "active": "",
+            "urgent": ""
+        }
+    },
+
+    "mpris": {
+        "player": "spotify",
+        "format": "{player_icon} {artist} - {title}",
+        "format-paused": "{status_icon} <i>{artist} - {title}</i>",
+        "player-icons": {
+            "default": "▶",
+            "spotify": "",
+            "firefox": "󰈹"
+        },
+        "status-icons": {
+            "paused": ""
+        },
+        "max-length": 45,
+        "interval": 1,
+        "on-click": "playerctl play-pause",
+        "on-click-right": "playerctl next",
+        "on-click-middle": "playerctl previous",
+        "tooltip-format": "Player: {player}\nStatus: {status}\nAlbum: {album}"
+    },
+
+    "clock": {
+        "format": "{:%H:%M}",
+        "format-alt": " {:%d/%m/%Y}",
+        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
+    },
+
+    "custom/updates": {
+        "format": "󰚰 {}",
+        "interval": 3600,
+        "exec": "checkupdates | wc -l",
+        "exec-if": "exit 0",
+        "on-click": "kitty -e yay",
+        "signal": 8,
+        "tooltip": false
+    },
+
+    "bluetooth": {
+        "format": " {status}",
+        "format-disabled": " off",
+        "format-connected": " {device_alias}",
+        "format-connected-battery": " {device_alias} {device_battery_percentage}%",
+        "tooltip-format": "{controller_alias}\t{controller_address}\n\n{device_enumerate}",
+        "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
+        "tooltip-format-enumerate-connected-battery": "{device_alias}\t{device_address}\t{device_battery_percentage}%",
+        "on-click": "kitty -e bluetoothctl"
+    },
+
+    "cpu": {
+        "interval": 2,
+        "format": " {usage}%",
+        "on-click": "kitty -e btop"
+    },
+
+    "temperature": {
+        "thermal-zone": 0,
+        "critical-threshold": 80,
+        "format": "{icon} {temperatureC}°C",
+        "format-icons": ["", "", ""],
+        "on-click": "kitty -e btop"
+    },
+
+    "pulseaudio": {
+        "format": "{icon}  {volume}%",
+        "format-muted": "󰝟 Muted",
+        "format-icons": {
+            "headphone": "",
+            "hands-free": "",
+            "headset": "",
+            "phone": "",
+            "portable": "",
+            "car": "",
+            "default": ["", "", ""]
+        },
+        "on-click": "pavucontrol",
+        "on-scroll-up": "pamixer -i 5",
+        "on-scroll-down": "pamixer -d 5"
+    },
+
+    "network": {
+        "format-wifi": " {essid}",
+        "format-ethernet": " {ifname}",
+        "format-linked": " {ifname} (Sem IP)",
+        "format-disconnected": "⚠ Off",
+        "on-click": "networkmanager_dmenu",
+        "tooltip-format": "{ifname} via {gwaddr} \nIP: {ipaddr}/{cidr}\nSinal: {signalStrength}%"
+    },
+
+    "battery#bat0": {
+        "bat": "BAT0",
+        "states": {
+            "warning": 30,
+            "critical": 15
+        },
+        "format": "{icon} {capacity}%",
+        "format-charging": " {capacity}%",
+        "format-plugged": " {capacity}%",
+        "format-alt": "{time} {icon}",
+        "format-icons": ["", "", "", "", ""]
+    },
+
+    "battery#bat1": {
+        "bat": "BAT1",
+        "states": {
+            "warning": 30,
+            "critical": 15
+        },
+        "format": "{icon} {capacity}%",
+        "format-charging": " {capacity}%",
+        "format-plugged": " {capacity}%",
+        "format-alt": "{time} {icon}",
+        "format-icons": ["", "", "", "", ""]
+    }
+}

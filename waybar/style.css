@@ -1,0 +1,161 @@
+@import "cream.css";
+
+/* Configuração Geral */
+* {
+    font-family: "JetBrainsMono Nerd Font", "JetBrains Mono", sans-serif;
+    font-size: 13px;
+    font-weight: bold;
+    min-height: 0;
+}
+
+window#waybar {
+    background-color: transparent;
+}
+
+/* Estilo das Ilhas Flutuantes (Floating Islands) */
+.modules-left,
+.modules-center,
+.modules-right {
+    background-color: alpha(@coffy, 0.85); /* @coffy (fundo escuro) com transparência */
+    border: 1px solid @sepia;              /* Bordas cor de sepia */
+    border-radius: 14px;
+    padding: 2px 10px;
+    margin-top: 5px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.modules-left {
+    margin-left: 10px;
+}
+
+.modules-right {
+    margin-right: 10px;
+}
+
+/* Espaçamento entre módulos dentro das ilhas */
+#workspaces,
+#mpris,
+#clock,
+#custom-updates,
+#bluetooth,
+#cpu,
+#temperature,
+#pulseaudio,
+#network,
+#battery {
+    padding: 0 8px;
+    margin: 4px 0;
+}
+
+/* Workspaces */
+#workspaces button {
+    padding: 0 8px;
+    color: @sand;                    /* Sand suave para workspaces inativos */
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    text-shadow: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+#workspaces button:hover {
+    color: @caramel;                 /* Destaque em caramel ao passar o mouse */
+    background-color: @surface1;      /* Fundo marrom mais claro (hover) */
+    border: none;
+    box-shadow: none;
+}
+
+#workspaces button.active {
+    color: @coffy;                   /* Texto escuro coffy para alto contraste */
+    background-color: @caramel;      /* Fundo caramel para o workspace ativo */
+    border-radius: 8px;
+    min-width: 30px;
+}
+
+#workspaces button.urgent {
+    color: @coffy;                   /* Texto escuro coffy */
+    background-color: @red;          /* Fundo vermelho de alerta */
+}
+
+/* Módulos de Informação */
+#clock {
+    color: @caramel;                 /* Relógio na cor caramel */
+}
+
+#mpris {
+    color: @cream;                   /* Texto de música em cream */
+    border-left: 1px solid @sepia;   /* Divisor cor de sepia */
+    margin-left: 10px;
+}
+
+#custom-updates {
+    color: @orange;                  /* Laranja para atualizações pendentes */
+}
+
+#bluetooth {
+    color: @caramel;                 /* Caramel quando desligado/inativo */
+}
+
+#bluetooth.connected {
+    color: @cream;                   /* Cream quando conectado */
+}
+
+#cpu {
+    color: @cream;                   /* CPU em cream */
+}
+
+#temperature {
+    color: @cream;                   /* Temperatura em cream */
+}
+
+#temperature.critical {
+    color: @red;                     /* Vermelho para temperatura crítica */
+}
+
+#pulseaudio {
+    color: @caramel;                 /* Áudio na cor caramel */
+}
+
+#pulseaudio.muted {
+    color: @sepia;                   /* Sepia para áudio mutado */
+}
+
+#network {
+    color: @cream;                   /* Rede na cor cream */
+}
+
+#network.disconnected {
+    color: @red;                     /* Vermelho quando desconectado */
+}
+
+/* Bateria */
+#battery {
+    color: @green;                   /* Verde para bateria com carga normal */
+}
+
+#battery.warning {
+    color: @orange;                  /* Laranja para bateria em estado de alerta */
+}
+
+#battery.critical:not(.charging) {
+    color: @red;                     /* Vermelho de perigo piscando */
+    animation-name: blink;
+    animation-duration: 0.8s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+#battery.charging {
+    color: @green;
+    text-decoration: underline;
+}
+
+/* Animações */
+@keyframes blink {
+    to {
+        background-color: @red;
+        color: @coffy;
+    }
+}

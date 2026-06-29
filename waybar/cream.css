@@ -1,0 +1,28 @@
+/* Principal Colors */
+@define-color cream   #FFFDF9; /* Primary text / Light Cream */
+@define-color sand    #EFE6DC; /* Secondary text / Muted Cream */
+@define-color sepia   #8C7A6B; /* Borders / Dividers */
+@define-color caramel #D4A373; /* Highlights / Caramel */
+@define-color coffy   #2C1A14; /* Background for modules / Coffy */
+
+/* Status Colors - Visible but not jarring */
+@define-color red     #f38ba8; /* Warning / Critical */
+@define-color orange  #fab387; /* Alert / Attention (Alarm) */
+@define-color green   #a6e3a1; /* Success / OK */
+
+/* Compatibility variables for style.css */
+@define-color black   @coffy;
+@define-color gray1   @cream;
+@define-color gray2   @sand;
+@define-color gray3   @sepia;
+@define-color ice     @caramel;
+
+@define-color calm    @caramel;
+@define-color pacific @cream;
+@define-color ocean   @sepia;
+
+/* Utility colors used in style.css */
+@define-color surface1 #4A352C; /* Lighter brown for hover/active states */
+@define-color overlay0 @sand;
+@define-color base     @coffy;
+@define-color alarm    @orange;
