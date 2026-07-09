@@ -15,14 +15,7 @@
         "clock"
     ],
     "modules-right": [
-        "custom/updates",
-        "bluetooth",
-        "cpu",
-        "temperature",
-        "pulseaudio",
-        "network",
-        "battery#bat0",
-        "battery#bat1"
+        "group/info"
     ],
 
     "hyprland/workspaces": {
@@ -63,6 +56,11 @@
         "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
     },
 
+    "tray": {
+        "icon-size": 18,
+        "spacing": 10
+    },
+
     "custom/updates": {
         "format": "󰚰 {}",
         "interval": 3600,
@@ -70,6 +68,11 @@
         "exec-if": "exit 0",
         "on-click": "kitty -e yay",
         "signal": 8,
+        "tooltip": false
+    },
+
+    "custom/separator": {
+        "format": "|",
         "tooltip": false
     },
 
@@ -148,5 +151,21 @@
         "format-plugged": " {capacity}%",
         "format-alt": "{time} {icon}",
         "format-icons": ["", "", "", "", ""]
+    },
+
+    "group/info": {
+        "orientation": "horizontal",
+        "modules": [
+            "custom/updates",
+            "tray",
+            "custom/separator",
+            "bluetooth",
+            "cpu",
+            "temperature",
+            "pulseaudio",
+            "network",
+            "battery#bat0",
+            "battery#bat1"
+        ]
     }
 }

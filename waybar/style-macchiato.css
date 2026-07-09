@@ -32,6 +32,12 @@ window#waybar {
     margin-right: 10px;
 }
 
+#custom-separator {
+    color: @surface1;
+    padding: 0 4px;
+    margin: 3px 2px;
+}
+
 /* Estilização individual dos módulos */
 #workspaces,
 #mpris,
