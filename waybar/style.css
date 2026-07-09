@@ -94,7 +94,7 @@ window#waybar {
 }
 
 #bluetooth {
-    color: @caramel;                 /* Caramel quando desligado/inativo */
+    color: @cream;                 /* Caramel quando desligado/inativo */
 }
 
 #bluetooth.connected {
@@ -114,7 +114,7 @@ window#waybar {
 }
 
 #pulseaudio {
-    color: @caramel;                 /* Áudio na cor caramel */
+    color: @cream;                 /* Áudio na cor caramel */
 }
 
 #pulseaudio.muted {
