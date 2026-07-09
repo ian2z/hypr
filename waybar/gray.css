@@ -1,0 +1,22 @@
+/* Neutrals & Grays - Soft and professional */
+@define-color black   #11111b; /* Background for modules */
+@define-color gray1   #bac2de; /* Primary text / Light gray */
+@define-color gray2   #9399b2; /* Secondary text / Muted gray */
+@define-color gray3   #585b70; /* Borders / Dividers */
+@define-color ice     #cdd6f4; /* Highlights / Very light gray */
+
+/* Calm Blues - Muted and peaceful */
+@define-color calm    #89b4fa; /* Soft Lavender Blue */
+@define-color pacific #74c7ec; /* Calm Sky Blue */
+@define-color ocean   #31748f; /* Deep Muted Ocean Blue */
+
+/* Status Colors - Visible but not jarring */
+@define-color red     #f38ba8; /* Warning / Critical */
+@define-color orange  #fab387; /* Alert / Attention (Alarm) */
+@define-color green   #a6e3a1; /* Success / OK */
+
+/* Utility colors used in style.css */
+@define-color surface1 #45475a;
+@define-color overlay0 #6c7086;
+@define-color base     #1e1e2e;
+@define-color alarm    @orange;

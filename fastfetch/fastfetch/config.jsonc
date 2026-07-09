@@ -1,0 +1,168 @@
+{
+    //mod by ian2, original version on link below.
+    // https://github.com/Sarthak-Sidhant/thinkpad-fastfetch
+    "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+    "logo": {
+        "source": "~/.config/fastfetch/thinkpad.txt",
+        "type": "file",
+        "padding": {
+            "top": 1,
+            "left": 2,
+            "right": 4
+        }
+    },
+    "modules": [
+        // --- HEADER SECTION ---
+        {
+            "type": "custom",
+            "format": "" //header text here
+        },
+        {
+    "type": "title",
+    // Adjust the '20C' jump to fine-tune the center position
+    "format": "\u001b[1;31m󱓇 {user-name}@{host-name}"
+},
+
+        
+        // --- TIME & UPTIME ---
+        {
+            "type": "datetime",
+            "key": "time   ",
+            "keyColor": "#ffffff"
+        },
+        {
+            "type": "uptime",
+            "keyColor": "#ffffff",
+            "key": "uptime "
+        },
+
+        // --- SOFTWARE ---
+        {
+            "type": "custom",
+            "format": "\u001b[1;31m󰣇 software"
+        },
+        {
+            "type": "os",
+            "key": "distro ",
+            "keyColor": "#ffffff",
+            "format": "{2} {8}"
+        },
+        {
+            "type": "kernel",
+            "keyColor": "#ffffff",
+            "key": "kernel "
+        },
+        {
+            "type": "packages",
+            "keyColor": "#ffffff",
+            "key": "pkgs   "
+        },
+        {
+            "type": "shell",
+            "keyColor": "#ffffff",
+            "key": "shell  "
+        },
+        {
+            "type": "terminal",
+            "keyColor": "#ffffff",
+            "key": "terminal   "
+        },
+        {
+            "type": "de",
+            "keyColor": "#ffffff",
+            "key": ""
+        },
+
+        // --- HARDWARE ---
+        {
+            "type": "custom",
+            "keyColor": "#ffffff",
+            "format": "\u001b[1;31m󰍛 hardware"
+        },
+        {
+            "type": "cpu",
+            "key": "cpu    ",
+            "keyColor": "#ffffff",
+            "showPeCoreCount": true,
+            "temp": true
+        },
+        {
+            "type": "gpu",
+            "key": "gpu    ",
+            "keyColor": "#ffffff",
+            // Full Specs: Name @ Freq [Type]
+            "format": "{name} @ {frequency} [{type}]"
+        },
+        {
+            "type": "display",
+            "key": "display",
+            "keyColor": "#ffffff",
+            // Full Specs: Name, Res, Hz, Inches
+            "format": "{name} {width}x{height} @ {refresh-rate}Hz {inch}\""
+        },
+        {
+            "type": "sound",
+            "keyColor": "#ffffff",
+            "key": "sound  "
+        },
+        {
+            "type": "custom",
+            "keyColor": "#ffffff",
+            "format": "\u001b[1;31m  memory"
+        },
+        {
+            "type": "memory",
+            "keyColor": "#ffffff",
+            "key": "ram "
+        },
+        {
+            "type": "disk",
+            "key": "disk   ",
+            "keyColor": "#ffffff",
+            "folders": "/"
+        },
+        
+
+        // --- POWER & NET ---
+        {
+            "type": "custom",
+            "keyColor": "#ffffff",
+            "format":"\u001b[1;31m󰐥 power & net"
+        },
+        {
+            "type": "battery",
+            "keyColor": "#ffffff",
+            "key": "bat    ",
+            "format": "{capacity} ({status})"
+        },
+        {
+            "type": "poweradapter",
+            "keyColor": "#ffffff",
+            "key": "power  ",
+            "format": "{name}"
+        },
+        {
+            "type": "localip",
+            "keyColor": "#ffffff",
+            "key": "localip  ",
+            "format": "{ipv4} ({ifname})"
+        },
+// disabled because it makes stuff slow
+        //        {
+//            "type": "netio",
+//            "key": "{$5}  \u001b[35m󰓅 netio  "
+//        },
+        {
+            "type": "wifi",
+            "keyColor": "#ffffff",
+            "key": "wifi   ",
+            "format": "{ssid} ({signal-quality})"
+        },
+
+        // --- BOTTOM BORDER ---
+        {
+            "type": "custom",
+            "format": ""
+        }
+    ]
+}

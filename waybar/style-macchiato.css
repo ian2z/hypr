@@ -1,0 +1,156 @@
+@import "macchiato.css";
+
+/* Configuração Geral */
+* {
+    font-family: "JetBrainsMono Nerd Font", "JetBrains Mono", sans-serif;
+    font-size: 13px;
+    font-weight: bold;
+    min-height: 0;
+}
+
+window#waybar {
+    background-color: transparent;
+}
+
+/* Estilo das Ilhas Flutuantes */
+.modules-left,
+.modules-center,
+.modules-right {
+    background-color: @base;
+    border: 2px solid @surface0;
+    border-radius: 16px;
+    padding: 2px 8px;
+    margin-top: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.modules-left {
+    margin-left: 10px;
+}
+
+.modules-right {
+    margin-right: 10px;
+}
+
+/* Estilização individual dos módulos */
+#workspaces,
+#mpris,
+#clock,
+#custom-updates,
+#bluetooth,
+#cpu,
+#temperature,
+#pulseaudio,
+#network,
+#battery,
+#custom-notification {
+    padding: 0 10px;
+    margin: 3px 2px;
+}
+
+/* Workspaces */
+#workspaces button {
+    padding: 0 5px;
+    color: @subtext0;
+    transition: all 0.3s ease;
+}
+
+#workspaces button:hover {
+    color: @mauve;
+    background: transparent;
+}
+
+#workspaces button.active {
+    color: @green;
+}
+
+#workspaces button.urgent {
+    color: @red;
+}
+
+/* Módulos de Informação */
+#clock {
+    color: @lavender;
+}
+
+#mpris {
+    color: @green;
+    border-left: 1px solid @surface1;
+    margin-left: 10px;
+}
+
+#custom-updates {
+    color: @maroon;
+}
+
+#bluetooth {
+    color: @blue;
+}
+
+#bluetooth.connected {
+    color: @teal;
+}
+
+#cpu {
+    color: @sky;
+}
+
+#temperature {
+    color: @yellow;
+}
+
+#temperature.critical {
+    color: @red;
+}
+
+#pulseaudio {
+    color: @sapphire;
+}
+
+#pulseaudio.muted {
+    color: @overlay0;
+}
+
+#network {
+    color: @mauve;
+}
+
+#network.disconnected {
+    color: @red;
+}
+
+/* Bateria */
+#battery {
+    color: @green;
+}
+
+#battery.warning {
+    color: @peach;
+}
+
+#battery.critical:not(.charging) {
+    color: @red;
+    animation-name: blink;
+    animation-duration: 0.5s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+#battery.charging {
+    color: @teal;
+}
+
+/* Notificações */
+#custom-notification {
+    color: @flamingo;
+    margin-left: 5px;
+}
+
+/* Animação para bateria fraca */
+@keyframes blink {
+    to {
+        background-color: @red;
+        color: @base;
+    }
+}
