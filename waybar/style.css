@@ -31,6 +31,10 @@ window#waybar {
     margin-right: 10px;
 }
 
+#custom-icon {
+    color: @caramel;
+}
+
 #custom-separator {
     color: @sepia;
     padding: 0 4px;

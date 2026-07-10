@@ -8,6 +8,7 @@
     "spacing": 0,
     
     "modules-left": [
+        "custom/icon",
         "hyprland/workspaces",
         "mpris"
     ],
@@ -17,6 +18,11 @@
     "modules-right": [
         "group/info"
     ],
+
+    "custom/icon": {
+        "format": "ian  ",
+        "tooltip": false
+    },
 
     "hyprland/workspaces": {
         "disable-scroll": true,
