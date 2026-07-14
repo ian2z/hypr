@@ -7,16 +7,24 @@ THRESHOLD_BAT=300    # 5 minutes
 accumulated=0
 last_time=$(date +%s)
 
+# Turn off display after 10 seconds of locking to save energy,
+# but skip if the system was suspended during the sleep.
+(
+    start_time=$(date +%s)
+    sleep 10
+    end_time=$(date +%s)
+    elapsed=$((end_time - start_time))
+    if [ "$elapsed" -lt 14 ]; then
+        if pidof hyprlock >/dev/null; then
+            hyprctl dispatch dpms off
+        fi
+    fi
+) &
+
 # Give hyprlock a moment to fully initialize
 sleep 2
 
-# Turn off display after 10 seconds of locking to save energy
-(
-    sleep 8
-    if pidof hyprlock >/dev/null; then
-        hyprctl dispatch dpms off
-    fi
-) &
+
 
 while pidof hyprlock >/dev/null; do
     sleep 5

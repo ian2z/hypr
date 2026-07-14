@@ -10,3 +10,13 @@ fi
 
 # Launch hyprlock in the foreground
 hyprlock
+
+# Force the display to turn back ON after unlocking (with a delay for compositor transition)
+sleep 0.5
+hyprctl dispatch dpms on
+
+# Tell logind that the session is now unlocked
+loginctl unlock-session
+
+
+
