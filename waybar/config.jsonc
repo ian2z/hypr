@@ -58,7 +58,7 @@
 
     "clock": {
         "format": "{:%H:%M}",
-        "format-alt": " {:%d/%m/%Y}",
+        "format-alt": "{:%d/%m/%Y}",
         "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
     },
 
@@ -84,7 +84,7 @@
 
     "bluetooth": {
         "format": " {status}",
-        "format-disabled": " off",
+        "format-disabled": "󰂲",
         "format-connected": " {device_alias}",
         "format-connected-battery": " {device_alias} {device_battery_percentage}%",
         "tooltip-format": "{controller_alias}\t{controller_address}\n\n{device_enumerate}",
@@ -125,9 +125,9 @@
     },
 
     "network": {
-        "format-wifi": " {essid}",
-        "format-ethernet": " {ifname}",
-        "format-linked": " {ifname} (Sem IP)",
+        "format-wifi": "  {essid}",
+        "format-ethernet": "󰈁 {ifname}",
+        "format-linked": "󰈂 {ifname} (Sem IP)",
         "format-disconnected": "⚠ Off",
         "on-click": "networkmanager_dmenu",
         "tooltip-format": "{ifname} via {gwaddr} \nIP: {ipaddr}/{cidr}\nSinal: {signalStrength}%"
@@ -159,6 +159,11 @@
         "format-icons": ["", "", "", "", ""]
     },
 
+    "custom/powermenu": {
+        "format":"⏻ ",
+        "on-click": "~/.config/rofi/powermenu/type-1/powermenu.sh"
+    },
+
     "group/info": {
         "orientation": "horizontal",
         "modules": [
@@ -166,12 +171,11 @@
             "tray",
             "custom/separator",
             "bluetooth",
-            "cpu",
-            "temperature",
             "pulseaudio",
             "network",
             "battery#bat0",
-            "battery#bat1"
+            "battery#bat1",
+            "custom/powermenu"
         ]
     }
 }

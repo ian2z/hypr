@@ -51,7 +51,8 @@ window#waybar {
 #temperature,
 #pulseaudio,
 #network,
-#battery {
+#battery,
+#custom-powermenu {
     padding: 0 8px;
     margin: 4px 0;
 }
@@ -99,7 +100,7 @@ window#waybar {
 }
 
 #custom-updates {
-    color: @orange;
+    color: @caramel;
 }
 
 #bluetooth {
@@ -159,6 +160,10 @@ window#waybar {
 #battery.charging {
     color: @green;
     text-decoration: underline;
+}
+
+#custom-powermenu {
+    color: @cream;
 }
 
 /* Animações */
