@@ -20,7 +20,7 @@
     ],
 
     "custom/icon": {
-        "format": "ian  ",
+        "format": "ian",
         "tooltip": false
     },
 
@@ -31,7 +31,7 @@
         "on-click": "activate",
         "format-icons": {
             "default": "",
-            "active": "",
+            "active": "  ",
             "urgent": ""
         }
     },
