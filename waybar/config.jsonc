@@ -50,10 +50,10 @@
         },
         "max-length": 45,
         "interval": 1,
-        "on-click": "playerctl play-pause",
+        "on-click": "~/.config/quickshell/toggle.sh",
         "on-click-right": "playerctl next",
         "on-click-middle": "playerctl previous",
-        "tooltip-format": "Player: {player}\nStatus: {status}\nAlbum: {album}"
+        "tooltip": false
     },
 
     "clock": {
