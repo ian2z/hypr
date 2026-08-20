@@ -30,7 +30,7 @@ Scope {
 
         margins {
             top: 10
-            left: 240
+            left: 100
         }
 
         implicitWidth: 360

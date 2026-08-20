@@ -8,12 +8,11 @@
     "spacing": 0,
     
     "modules-left": [
-        "custom/icon",
-        "hyprland/workspaces",
+        "clock",
         "mpris"
     ],
     "modules-center": [
-        "clock"
+        "hyprland/workspaces"
     ],
     "modules-right": [
         "group/info"
