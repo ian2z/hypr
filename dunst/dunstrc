@@ -1,11 +1,11 @@
-# Dunst Config - Catppuccin Mocha
-# Facilitador de cores (basta copiar e colar nos campos abaixo se quiser mudar)
-# Base: #1e1e2e
-# Text: #cdd6f4
-# Blue: #89b4fa
+# Dunst Config - Sepia
+
+# Base: #2C1A14
+# Text: #EFE6DC
+# Caramel: #8C7A6B
 # Green: #a6e3a1
-# Red: #f38ba8
-# Yellow: #f9e2af
+# Red Alert: #f38ba8
+# Sand: #D4A373
 
 [global]
     ### Display ###
@@ -79,21 +79,21 @@
 [urgency_low]
     # Cores Catppuccin Mocha
     background = "#1e1e2e"
-    foreground = "#cdd6f4"
-    frame_color = "#89b4fa"
+    foreground = "#D4A373"
+    frame_color = "#EFE6DC"
     timeout = 5
     default_icon = dialog-information
 
 [urgency_normal]
-    background = "#1e1e2e"
-    foreground = "#cdd6f4"
-    frame_color = "#a6e3a1"
+    background = "#2C1A14"
+    foreground = "#D4A373"
+    frame_color = "#EFE6DC"
     timeout = 10
     default_icon = dialog-information
 
 [urgency_critical]
-    background = "#1e1e2e"
-    foreground = "#cdd6f4"
+    background = "#2C1A14"
+    foreground = "#D4A373"
     frame_color = "#f38ba8"
     timeout = 0
     default_icon = dialog-warning
