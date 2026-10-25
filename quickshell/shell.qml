@@ -1,94 +1,85 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import Quickshell.Services.Mpris
 import "style"
-import "components"
+import "services"
+import "modules"
 
 Scope {
     id: root
 
-    // Search for Spotify player or pick the first active MPRIS player
-    readonly property var activePlayer: {
-        var players = Mpris.players.values
-        for (var i = 0; i < players.length; i++) {
-            if (players[i].identity && players[i].identity.toLowerCase().indexOf("spotify") !== -1) {
-                return players[i]
-            }
-        }
-        return players.length > 0 ? players[0] : null
-    }
-
     PanelWindow {
-        id: mediaWindow
+        id: controlCenterWindow
         visible: true
+        focusable: true
+        aboveWindows: true
+        exclusionMode: ExclusionMode.Ignore
 
         anchors {
             top: true
+            bottom: true
             left: true
+            right: true
         }
-
-        margins {
-            top: 10
-            left: 100
-        }
-
-        implicitWidth: 360
-        implicitHeight: 145
 
         color: "transparent"
 
-        Rectangle {
+        // Camada invisível em tela cheia: clicar em qualquer lugar fora do painel fecha o Quickshell
+        MouseArea {
             anchors.fill: parent
+            acceptedButtons: Qt.AllButtons
+            onPressed: Qt.quit()
+        }
+
+        // Atalho Esc também fecha o painel
+        Item {
+            focus: true
+            Keys.onEscapePressed: Qt.quit()
+        }
+
+        // Card Flutuante do Painel de Controle
+        Rectangle {
+            id: backgroundCard
+            x: 10
+            y: 50
+            width: 380
+            height: mainLayout.implicitHeight + 28
+
             radius: Theme.radiusLarge
             color: Theme.backgroundTransparent
             border.color: Theme.border
             border.width: 1
 
-            RowLayout {
+            Behavior on height {
+                NumberAnimation { duration: 160; easing.type: Easing.OutQuad }
+            }
+
+            // Absorve cliques dentro do card para não disparar o fechamento do fundo
+            MouseArea {
                 anchors.fill: parent
+                acceptedButtons: Qt.AllButtons
+                hoverEnabled: true
+            }
+
+            ColumnLayout {
+                id: mainLayout
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.top
                 anchors.margins: 14
-                spacing: 14
+                spacing: 12
 
-                AlbumArt {
-                    artUrl: root.activePlayer ? (root.activePlayer.artUrl || root.activePlayer.trackArtUrl || "") : ""
-                    size: 115
-                }
+                // 1. Cabeçalho Geral (Usuário, Bateria, Bloqueio e Powermenu)
+                HeaderBar {}
 
-                ColumnLayout {
-                    Layout.fillWidth: true
-                    spacing: 6
+                // 2. Acessos Rápidos (Rede Wi-Fi/Cabeada, Bluetooth, Updates, Não Perturbe)
+                QuickSettingsGrid {}
 
-                    // Track Title
-                    Text {
-                        text: root.activePlayer && root.activePlayer.trackTitle ? root.activePlayer.trackTitle : "Spotify Desconectado"
-                        font.pixelSize: 14
-                        font.bold: true
-                        color: Theme.text
-                        elide: Text.ElideRight
-                        Layout.fillWidth: true
-                    }
+                // 3. Controle de Volume Inteligente (Alto-falantes / Fone + Seletor de Saída)
+                AudioPanel {}
 
-                    // Artist Name
-                    Text {
-                        text: root.activePlayer && root.activePlayer.trackArtist ? root.activePlayer.trackArtist : (root.activePlayer && root.activePlayer.artist ? root.activePlayer.artist : "Abra o aplicativo de música")
-                        font.pixelSize: 12
-                        color: Theme.textMuted
-                        elide: Text.ElideRight
-                        Layout.fillWidth: true
-                    }
-
-                    // Timeline
-                    Timeline {
-                        player: root.activePlayer
-                        Layout.fillWidth: true
-                    }
-
-                    // Controls
-                    MediaControls {
-                        player: root.activePlayer
-                    }
-                }
+                // 4. Player do Spotify / Mídia + Visualizador de Espectro em Tempo Real
+                MediaCard {}
             }
         }
     }

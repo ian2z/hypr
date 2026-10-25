@@ -43,6 +43,7 @@ window#waybar {
 
 /* Espaçamento entre módulos dentro das ilhas */
 #workspaces,
+#custom-quickshell,
 #mpris,
 #clock,
 #custom-updates,
@@ -55,6 +56,19 @@ window#waybar {
 #custom-powermenu {
     padding: 0 8px;
     margin: 4px 0;
+}
+
+#custom-quickshell {
+    color: @caramel;
+    font-size: 15px;
+    border-right: 1px solid @sepia;
+    padding-right: 10px;
+    margin-right: 4px;
+    transition: all 0.2s ease;
+}
+
+#custom-quickshell:hover {
+    color: @cream;
 }
 
 /* Workspaces */

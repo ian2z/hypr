@@ -8,6 +8,7 @@
     "spacing": 0,
     
     "modules-left": [
+        "custom/quickshell",
         "clock",
         "mpris"
     ],
@@ -17,6 +18,13 @@
     "modules-right": [
         "group/info"
     ],
+
+    "custom/quickshell": {
+        "format": "󰕮 ",
+        "on-click": "~/.config/quickshell/toggle.sh",
+        "tooltip": true,
+        "tooltip-format": "Painel de Controle (Quickshell)"
+    },
 
     "custom/icon": {
         "format": "ian",
@@ -166,10 +174,8 @@
     "group/info": {
         "orientation": "horizontal",
         "modules": [
-            "custom/updates",
             "tray",
             "custom/separator",
-            "bluetooth",
             "pulseaudio",
             "network",
             "battery#bat0",
