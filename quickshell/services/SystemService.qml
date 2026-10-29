@@ -2,176 +2,103 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Io
-import Quickshell.Bluetooth
-import Quickshell.Networking
-import Quickshell.Services.UPower
 
 Scope {
     id: root
 
     // =========================================================================
-    // 1. BLUETOOTH (Quickshell.Bluetooth)
+    // 1. REDE CABEADA / ETHERNET (iproute2 + nmcli)
     // =========================================================================
-    readonly property var btAdapter: Bluetooth.defaultAdapter
-    readonly property bool btEnabled: btAdapter ? btAdapter.enabled : false
-
-    readonly property var connectedBtDevices: {
-        var list = []
-        if (!Bluetooth.devices || !Bluetooth.devices.values) return list
-        var devs = Bluetooth.devices.values
-        for (var i = 0; i < devs.length; i++) {
-            if (devs[i] && devs[i].connected) {
-                list.push(devs[i])
-            }
-        }
-        return list
-    }
-
-    readonly property var pairedBtDevices: {
-        var list = []
-        if (!Bluetooth.devices || !Bluetooth.devices.values) return list
-        var devs = Bluetooth.devices.values
-        for (var i = 0; i < devs.length; i++) {
-            if (devs[i] && (devs[i].paired || devs[i].connected)) {
-                list.push(devs[i])
-            }
-        }
-        return list
-    }
-
-    readonly property var primaryBtDevice: connectedBtDevices.length > 0 ? connectedBtDevices[0] : null
-    readonly property string btStatusTitle: {
-        if (!btEnabled) return "Bluetooth"
-        if (primaryBtDevice) return primaryBtDevice.name || primaryBtDevice.deviceName || "Conectado"
-        return "Bluetooth"
-    }
-    readonly property string btStatusSubtitle: {
-        if (!btEnabled) return "Desligado"
-        if (primaryBtDevice) {
-            if (primaryBtDevice.batteryAvailable && primaryBtDevice.battery > 0) {
-                var pct = primaryBtDevice.battery <= 1.0
-                    ? Math.round(primaryBtDevice.battery * 100)
-                    : Math.round(primaryBtDevice.battery)
-                return "Conectado • " + pct + "%"
-            }
-            return "Conectado"
-        }
-        return "Ligado • Pareado"
-    }
-
-    function toggleBluetooth() {
-        if (btAdapter) {
-            btAdapter.enabled = !btAdapter.enabled
-        } else {
-            Quickshell.execDetached(["bluetoothctl", "power", btEnabled ? "off" : "on"])
-        }
-    }
-
-    function openBluetoothManager() {
-        Quickshell.execDetached(["kitty", "-e", "bluetoothctl"])
-    }
-
-    // =========================================================================
-    // 2. REDE: WI-FI & CABEADA / ETHERNET (Quickshell.Networking + nmcli)
-    // =========================================================================
-    readonly property bool wifiEnabled: Networking.wifiEnabled
-    property string netType: "none"       // "wifi", "ethernet", "none"
-    property string netName: "Desconectado"
-    property string netInterface: ""
-    property int wifiSignal: 0
+    property string netType: "ethernet"   // "ethernet", "wifi", "none"
+    property string netInterface: "enp6s0"
+    property string netIp: ""
     property bool tailscaleActive: false
 
     readonly property string netIcon: {
         if (netType === "ethernet") return "󰈀"
-        if (netType === "wifi") {
-            if (wifiSignal >= 75) return "󰤨"
-            if (wifiSignal >= 50) return "󰤥"
-            if (wifiSignal >= 25) return "󰤢"
-            return "󰤟"
-        }
-        return wifiEnabled ? "󰤯" : "󰤭"
+        if (netType === "wifi") return "󰤨"
+        return "󰈂"
     }
 
     readonly property string netTitle: {
         if (netType === "ethernet") return "Rede Cabeada"
-        if (netType === "wifi") return netName !== "" ? netName : "Wi-Fi"
-        return "Rede"
+        if (netType === "wifi") return "Wi-Fi"
+        return "Desconectado"
     }
 
     readonly property string netSubtitle: {
-        if (netType === "ethernet") return (netInterface || "Ethernet") + (tailscaleActive ? " • VPN" : "")
-        if (netType === "wifi") return "Wi-Fi (" + wifiSignal + "%)" + (tailscaleActive ? " • VPN" : "")
-        return wifiEnabled ? "Desconectado" : "Wi-Fi Desligado"
+        if (netType === "none") return "Sem conexão"
+        var detail = netIp !== "" ? netIp : (netInterface || "Conectado")
+        return detail + (tailscaleActive ? " • VPN" : "")
     }
 
     Process {
         id: netCheckProc
-        command: ["sh", "-c", "nmcli -t -f TYPE,STATE,CONNECTION,DEVICE device 2>/dev/null; echo '---WIFI---'; nmcli -t -f ACTIVE,SSID,SIGNAL dev wifi 2>/dev/null | grep '^yes:' || true"]
+        command: ["sh", "-c", "IFACE_IP=$(ip -4 -o addr show up scope global 2>/dev/null | awk '$2 !~ /^(docker|br-|veth|lo|tailscale)/ {split($4,a,\"/\"); print $2\":\"a[1]; exit}'); IFACE=${IFACE_IP%%:*}; IP=${IFACE_IP#*:}; VPN=$(ip link show tailscale0 up 2>/dev/null | grep -q 'UP' && echo '1' || echo '0'); if [ -n \"$IFACE\" ]; then echo \"NET|ethernet|$IFACE|$IP|$VPN\"; else echo \"NET|none|||0\"; fi"]
         stdout: SplitParser {
-            splitMarker: ""
             onRead: (data) => {
-                var text = data.trim()
-                if (!text) return
-                var parts = text.split("---WIFI---")
-                var devLines = (parts[0] || "").trim().split("\n")
-                var wifiLine = (parts[1] || "").trim()
-
-                var foundType = "none"
-                var foundName = "Desconectado"
-                var foundIface = ""
-                var hasTailscale = false
-
-                for (var i = 0; i < devLines.length; i++) {
-                    var cols = devLines[i].split(":")
-                    if (cols.length >= 4) {
-                        var t = cols[0]
-                        var st = cols[1]
-                        var conn = cols[2]
-                        var dev = cols[3]
-                        if (t === "tun" && dev === "tailscale0" && st.indexOf("connected") !== -1) {
-                            hasTailscale = true
-                        } else if (t === "ethernet" && st === "connected") {
-                            foundType = "ethernet"
-                            foundName = conn || "Ethernet"
-                            foundIface = dev
-                        } else if (t === "wifi" && st === "connected" && foundType !== "ethernet") {
-                            foundType = "wifi"
-                            foundName = conn || "Wi-Fi"
-                            foundIface = dev
-                        }
-                    }
+                var line = data.trim()
+                if (line.indexOf("NET|") !== 0) return
+                var parts = line.split("|")
+                if (parts.length >= 5) {
+                    root.netType = parts[1] || "none"
+                    root.netInterface = parts[2] || ""
+                    root.netIp = parts[3] || ""
+                    root.tailscaleActive = (parts[4] === "1")
                 }
-
-                if (wifiLine.indexOf("yes:") === 0) {
-                    var wcols = wifiLine.split(":")
-                    if (wcols.length >= 3) {
-                        var sig = parseInt(wcols[wcols.length - 1], 10)
-                        if (!isNaN(sig)) root.wifiSignal = sig
-                    }
-                }
-
-                root.netType = foundType
-                root.netName = foundName
-                root.netInterface = foundIface
-                root.tailscaleActive = hasTailscale
             }
         }
     }
 
-    function toggleWifi() {
-        Networking.wifiEnabled = !Networking.wifiEnabled
-        netRefreshDelay.restart()
+    function refreshNetwork() {
+        if (!netCheckProc.running) {
+            netCheckProc.running = true
+        }
     }
 
     function openNetworkManager() {
-        Quickshell.execDetached(["sh", "-c", "command -v networkmanager_dmenu >/dev/null 2>&1 && networkmanager_dmenu || kitty -e nmtui"])
+        Quickshell.execDetached(["kitty", "-e", "nmtui"])
     }
 
-    Timer {
-        id: netRefreshDelay
-        interval: 1200
-        repeat: false
-        onTriggered: netCheckProc.running = true
+    // =========================================================================
+    // 2. FILTRO NOTURNO / LUZ AZUL (hyprsunset)
+    // =========================================================================
+    property bool sunsetActive: false
+    readonly property var sunsetPresets: [4500, 3800, 3200]
+    property int sunsetPresetIndex: 0
+    readonly property int sunsetTemp: sunsetPresets[sunsetPresetIndex]
+
+    readonly property string sunsetIcon: sunsetActive ? "󰖔" : "󰖙"
+    readonly property string sunsetTitle: "Luz Noturna"
+    readonly property string sunsetSubtitle: sunsetActive
+        ? ("Ativo • " + sunsetTemp + "K")
+        : ("Desligado • " + sunsetTemp + "K")
+
+    Process {
+        id: sunsetCheckProc
+        command: ["sh", "-c", "pgrep -x hyprsunset >/dev/null 2>&1 && echo 'active' || echo 'inactive'"]
+        stdout: SplitParser {
+            onRead: (data) => {
+                root.sunsetActive = (data.trim() === "active")
+            }
+        }
+    }
+
+    function toggleSunset() {
+        if (root.sunsetActive) {
+            Quickshell.execDetached(["pkill", "-x", "hyprsunset"])
+            root.sunsetActive = false
+        } else {
+            Quickshell.execDetached(["sh", "-c", "pkill -x hyprsunset 2>/dev/null; hyprsunset -t " + root.sunsetTemp])
+            root.sunsetActive = true
+        }
+    }
+
+    function cycleSunsetTemp() {
+        root.sunsetPresetIndex = (root.sunsetPresetIndex + 1) % root.sunsetPresets.length
+        if (root.sunsetActive) {
+            Quickshell.execDetached(["sh", "-c", "pkill -x hyprsunset 2>/dev/null; hyprsunset -t " + root.sunsetTemp])
+        }
     }
 
     // =========================================================================
@@ -202,7 +129,7 @@ Scope {
     }
 
     function runSystemUpdate() {
-        Quickshell.execDetached(["kitty", "-e", "yay"])
+        Quickshell.execDetached(["sh", "-c", "kitty -e yay"])
     }
 
     // =========================================================================
@@ -226,38 +153,86 @@ Scope {
     }
 
     // =========================================================================
-    // 5. BATERIA & PERFIL DE ENERGIA (UPower)
+    // 5. HARDWARE (CPU, RAM) & UPTIME DO SISTEMA
     // =========================================================================
-    readonly property var displayBattery: UPower.displayDevice
-    readonly property int batteryPercent: (displayBattery && displayBattery.ready)
-        ? Math.round(displayBattery.percentage <= 1.0 ? displayBattery.percentage * 100 : displayBattery.percentage)
-        : 100
-    readonly property bool isCharging: !UPower.onBattery
-    readonly property string batteryIcon: {
-        if (isCharging) return ""
-        if (batteryPercent >= 85) return ""
-        if (batteryPercent >= 60) return ""
-        if (batteryPercent >= 35) return ""
-        if (batteryPercent >= 15) return ""
-        return ""
+    property int cpuPercent: 0
+    property real prevCpuTotal: 0
+    property real prevCpuIdle: 0
+
+    property int memPercent: 0
+    property string memUsedGb: "0.0"
+    property string memTotalGb: "0.0"
+
+    property string uptimeText: "..."
+
+    Process {
+        id: hwCheckProc
+        command: ["sh", "-c", "awk '/^cpu / {print \"CPU|\" ($2+$3+$4+$5+$6+$7+$8) \"|\" ($5+$6)}' /proc/stat; awk '/^MemTotal:/ {t=$2} /^MemAvailable:/ {a=$2} END {if(t>0) printf \"MEM|%d|%.1f|%.1f\\n\", ((t-a)/t)*100, (t-a)/1048576, t/1048576}' /proc/meminfo"]
+        stdout: SplitParser {
+            onRead: (data) => {
+                var line = data.trim()
+                if (line.indexOf("CPU|") === 0) {
+                    var cparts = line.split("|")
+                    var total = parseFloat(cparts[1])
+                    var idle = parseFloat(cparts[2])
+                    if (root.prevCpuTotal > 0 && total > root.prevCpuTotal) {
+                        var diffTotal = total - root.prevCpuTotal
+                        var diffIdle = idle - root.prevCpuIdle
+                        root.cpuPercent = Math.round(Math.max(0, Math.min(100, ((diffTotal - diffIdle) / diffTotal) * 100)))
+                    }
+                    root.prevCpuTotal = total
+                    root.prevCpuIdle = idle
+                } else if (line.indexOf("MEM|") === 0) {
+                    var mparts = line.split("|")
+                    root.memPercent = parseInt(mparts[1], 10) || 0
+                    root.memUsedGb = mparts[2] || "0.0"
+                    root.memTotalGb = mparts[3] || "0.0"
+                }
+            }
+        }
+    }
+
+    Process {
+        id: uptimeProc
+        command: ["uptime", "-p"]
+        stdout: SplitParser {
+            onRead: (data) => {
+                var raw = data.trim()
+                if (!raw) return
+                var clean = raw.replace(/^up\s+/i, "")
+                    .replace(/\s*days?,\s*/gi, "d ")
+                    .replace(/\s*days?\s*/gi, "d ")
+                    .replace(/\s*hours?,\s*/gi, "h ")
+                    .replace(/\s*hours?\s*/gi, "h ")
+                    .replace(/\s*minutes?/gi, "m")
+                root.uptimeText = clean || "0m"
+            }
+        }
+    }
+
+    function openSystemMonitor() {
+        Quickshell.execDetached(["kitty", "-e", "btop"])
     }
 
     // =========================================================================
     // TIMERS DE SINCRONIZAÇÃO
     // =========================================================================
     Timer {
-        interval: 4000
+        interval: 3000
         running: true
         repeat: true
         triggeredOnStart: true
         onTriggered: {
             if (!netCheckProc.running) netCheckProc.running = true
+            if (!sunsetCheckProc.running) sunsetCheckProc.running = true
             if (!dndCheckProc.running) dndCheckProc.running = true
+            if (!hwCheckProc.running) hwCheckProc.running = true
+            if (!uptimeProc.running) uptimeProc.running = true
         }
     }
 
     Timer {
-        interval: 1800000 // 30 min (igual ao intervalo de updates)
+        interval: 1800000 // 30 min
         running: true
         repeat: true
         triggeredOnStart: true

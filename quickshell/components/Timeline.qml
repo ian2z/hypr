@@ -20,7 +20,7 @@ ColumnLayout {
         id: sliderTrack
         Layout.fillWidth: true
         height: 6
-        radius: 3
+        radius: Theme.radiusSmall
         color: Theme.surface
 
         Rectangle {
@@ -54,8 +54,9 @@ ColumnLayout {
 
         Text {
             text: root.player ? root.formatTime(root.player.position) : "00:00"
-            font.pixelSize: 11
-            color: Theme.textMuted
+            font.family: Theme.fontFamily
+            font.pixelSize: 10
+            color: Theme.textSubtle
         }
 
         Item {
@@ -64,8 +65,9 @@ ColumnLayout {
 
         Text {
             text: root.player ? root.formatTime(root.player.length) : "00:00"
-            font.pixelSize: 11
-            color: Theme.textMuted
+            font.family: Theme.fontFamily
+            font.pixelSize: 10
+            color: Theme.textSubtle
         }
     }
 }

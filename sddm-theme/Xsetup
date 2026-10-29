@@ -1,0 +1,19 @@
+#!/bin/sh
+# Rotate connected monitors 180 degrees during SDDM login
+if command -v xrandr >/dev/null 2>&1; then
+    # Detect any connected output dynamically and rotate to inverted
+    for out in $(xrandr | grep -w "connected" | awk '{print $1}'); do
+        xrandr --output "$out" --rotate inverted 2>/dev/null || true
+    done
+
+    # Fallback direct targeting for Nvidia output names
+    xrandr --output DFP-2 --rotate inverted 2>/dev/null || true
+    xrandr --output DP-1 --rotate inverted 2>/dev/null || true
+    xrandr --output DP-0 --rotate inverted 2>/dev/null || true
+    xrandr --output DisplayPort-0 --rotate inverted 2>/dev/null || true
+
+    # Turn off secondary monitor if present
+    xrandr --output DFP-1 --off 2>/dev/null || true
+    xrandr --output HDMI-0 --off 2>/dev/null || true
+    xrandr --output HDMI-A-1 --off 2>/dev/null || true
+fi

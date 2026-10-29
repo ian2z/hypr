@@ -5,20 +5,23 @@ import "../style"
 Row {
     id: root
     property var player: null
-    spacing: 16
+    spacing: 12
     Layout.alignment: Qt.AlignHCenter
 
     // Previous Button
     Rectangle {
-        width: 36
-        height: 36
-        radius: width / 2
+        width: 34
+        height: 34
+        radius: Theme.radiusSmall
         color: prevMouse.containsMouse ? Theme.surface : "transparent"
+        border.width: prevMouse.containsMouse ? 1 : 0
+        border.color: Theme.borderSubtle
 
         Text {
             anchors.centerIn: parent
             text: "󰒮"
-            font.pixelSize: 18
+            font.family: Theme.fontFamily
+            font.pixelSize: 17
             color: root.player && root.player.canGoPrevious ? Theme.text : Theme.textSubtle
         }
 
@@ -37,16 +40,17 @@ Row {
 
     // Play/Pause Button
     Rectangle {
-        width: 44
-        height: 44
-        radius: width / 2
-        color: Theme.primary
+        width: 40
+        height: 34
+        radius: Theme.radiusSmall
+        color: playMouse.containsMouse ? Theme.accent : Theme.primary
 
         Text {
             anchors.centerIn: parent
             text: root.player && root.player.isPlaying ? "󰏤" : "󰐊"
-            font.pixelSize: 20
-            color: Theme.background
+            font.family: Theme.fontFamily
+            font.pixelSize: 18
+            color: Theme.textOnPrimary
         }
 
         MouseArea {
@@ -61,21 +65,23 @@ Row {
             }
         }
 
-        scale: playMouse.containsMouse ? 1.08 : 1.0
-        Behavior on scale { NumberAnimation { duration: 150 } }
+        Behavior on color { ColorAnimation { duration: 150 } }
     }
 
     // Next Button
     Rectangle {
-        width: 36
-        height: 36
-        radius: width / 2
+        width: 34
+        height: 34
+        radius: Theme.radiusSmall
         color: nextMouse.containsMouse ? Theme.surface : "transparent"
+        border.width: nextMouse.containsMouse ? 1 : 0
+        border.color: Theme.borderSubtle
 
         Text {
             anchors.centerIn: parent
             text: "󰒭"
-            font.pixelSize: 18
+            font.family: Theme.fontFamily
+            font.pixelSize: 17
             color: root.player && root.player.canGoNext ? Theme.text : Theme.textSubtle
         }
 

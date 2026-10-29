@@ -1,0 +1,145 @@
+configuration {
+    modi:                       "drun,run,filebrowser";
+    show-icons:                 true;
+    display-drun:               "";
+    display-run:                "";
+    display-filebrowser:        "";
+    drun-display-format:        "{name}";
+    window-format:              "{w} · {c} · {t}";
+    font:                       "MesloLGS Nerd Font 11";
+    icon-theme:                 "breeze-dark";
+}
+
+* {
+    /* Palette matching Waybar & Quickshell */
+    bg-base:        #11111b;
+    bg-surface:     #181825;
+    bg-hover:       #1e1e2e;
+    bg-selected:    #313244;
+
+    fg-primary:     #cdd6f4;
+    fg-secondary:   #bac2de;
+    fg-muted:       #9399b2;
+
+    border-color:   #585b70;
+    accent-blue:    #89b4fa;
+    accent-red:     #f38ba8;
+
+    background-color: transparent;
+    text-color:       @fg-secondary;
+    margin:           0px;
+    padding:          0px;
+}
+
+window {
+    transparency:     "real";
+    background-color: @bg-base;
+    border:           2px solid;
+    border-color:     @border-color;
+    border-radius:    0px;
+    width:            620px;
+    location:         center;
+    anchor:           center;
+    x-offset:         0px;
+    y-offset:         0px;
+}
+
+mainbox {
+    background-color: transparent;
+    spacing:          0px;
+    padding:          0px;
+    children:         [ "inputbar", "listview" ];
+}
+
+inputbar {
+    background-color: @bg-surface;
+    border:           0px 0px 1px 0px;
+    border-color:     @border-color;
+    padding:          14px 16px;
+    spacing:          12px;
+    children:         [ "prompt", "entry" ];
+}
+
+prompt {
+    background-color: transparent;
+    text-color:       @accent-blue;
+    font:             "MesloLGS Nerd Font Bold 12";
+}
+
+entry {
+    background-color:  transparent;
+    text-color:        @fg-primary;
+    placeholder:       "Search applications...";
+    placeholder-color: @fg-muted;
+    font:              "MesloLGS Nerd Font 11";
+}
+
+listview {
+    background-color: transparent;
+    columns:          1;
+    lines:            8;
+    cycle:            true;
+    dynamic:          true;
+    scrollbar:        false;
+    layout:           vertical;
+    padding:          8px;
+    spacing:          4px;
+}
+
+element {
+    background-color: transparent;
+    text-color:       @fg-secondary;
+    border-radius:    0px;
+    padding:          8px 12px;
+    spacing:          12px;
+    children:         [ "element-icon", "element-text" ];
+}
+
+element normal.normal,
+element alternate.normal {
+    background-color: transparent;
+    text-color:       @fg-secondary;
+}
+
+element selected.normal {
+    background-color: @bg-selected;
+    text-color:       @fg-primary;
+    border:           0px 0px 0px 3px;
+    border-color:     @accent-blue;
+}
+
+element normal.active,
+element alternate.active {
+    background-color: transparent;
+    text-color:       @accent-blue;
+}
+
+element selected.active {
+    background-color: @bg-selected;
+    text-color:       @accent-blue;
+    border:           0px 0px 0px 3px;
+    border-color:     @accent-blue;
+}
+
+element-icon {
+    background-color: transparent;
+    size:             24px;
+    cursor:           inherit;
+}
+
+element-text {
+    background-color: transparent;
+    text-color:       inherit;
+    highlight:        inherit;
+    cursor:           inherit;
+    vertical-align:   0.5;
+}
+
+error-message {
+    padding:          16px;
+    border:           2px solid;
+    border-color:     @accent-red;
+    border-radius:    0px;
+    background-color: @bg-base;
+    text-color:       @fg-primary;
+}

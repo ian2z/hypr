@@ -11,7 +11,7 @@ GridLayout {
     columnSpacing: 8
     Layout.fillWidth: true
 
-    // 1. Conexão de Rede (Wi-Fi ou Cabeada / Ethernet)
+    // 1. Conexão de Rede Cabeada / Ethernet
     QuickTile {
         icon: SystemService.netIcon
         title: SystemService.netTitle
@@ -19,22 +19,21 @@ GridLayout {
         active: SystemService.netType !== "none"
         hasSecondaryAction: true
         secondaryIcon: "󰅂"
-        onClicked: SystemService.toggleWifi()
-        onSecondaryClicked: SystemService.openNetworkManager()
+        onClicked: SystemService.openNetworkManager()
+        onSecondaryClicked: SystemService.refreshNetwork()
     }
 
-    // 2. Bluetooth (Mostra dispositivo conectado, ex: TWS-6, e bateria)
+    // 2. Filtro Noturno (Hyprsunset - Luz Azul)
     QuickTile {
-        icon: SystemService.btEnabled
-            ? (SystemService.primaryBtDevice ? "󰂱" : "")
-            : "󰂲"
-        title: SystemService.btStatusTitle
-        subtitle: SystemService.btStatusSubtitle
-        active: SystemService.btEnabled
+        icon: SystemService.sunsetIcon
+        title: SystemService.sunsetTitle
+        subtitle: SystemService.sunsetSubtitle
+        active: SystemService.sunsetActive
+        activeColor: Theme.orange
         hasSecondaryAction: true
-        secondaryIcon: "󰅂"
-        onClicked: SystemService.toggleBluetooth()
-        onSecondaryClicked: SystemService.openBluetoothManager()
+        secondaryIcon: "󰔎"
+        onClicked: SystemService.toggleSunset()
+        onSecondaryClicked: SystemService.cycleSunsetTemp()
     }
 
     // 3. Checagem de Atualizações (checkupdates / yay)

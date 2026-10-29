@@ -4,8 +4,8 @@
 
 hl.config({
     general = {
-        gaps_in  = 5,
-        gaps_out = 10,
+        gaps_in  = 3,
+        gaps_out = 5,
         border_size = 2,
         col = {
             active_border   = { colors = { "rgba(FFFDF9e6)", "rgba(EFE6DCe6)" }, angle = 45 },
@@ -15,7 +15,7 @@ hl.config({
     },
 
     decoration = {
-        rounding = 10,
+        rounding = 0,
         blur = {
             enabled = true,
             size    = 3,
@@ -31,13 +31,32 @@ hl.config({
     input = {
         kb_layout  = "br",
         kb_variant = "",
-        kb_model   = "thinkpad",
+        kb_model   = "",
         follow_mouse = 1,
 
         touchpad = {
             natural_scroll       = true,
-            tap_to_click         = true,     -- Ativa o clique com um toque leve no touchpad
-            disable_while_typing = true,     -- Evita cliques acidentais enquanto você digita
+            tap_to_click         = true,
+            disable_while_typing = true,
         },
     },
+
+    cursor = {
+        no_hardware_cursors = true,
+    },
 })
+
+-- Ignora solicitações de maximização automáticas das aplicações (evita abrir em fullscreen/maximized)
+hl.window_rule({
+    name  = "suppress-maximize-events",
+    match = { class = ".*" },
+    suppress_event = "maximize",
+})
+
+-- Janelas flutuantes utilitárias
+hl.window_rule({
+    name  = "pavucontrol-float",
+    match = { class = "org.pulseaudio.pavucontrol" },
+    float = true,
+})
+

@@ -1,0 +1,1 @@
+/home/ian/.config/rofi/launcher.sh

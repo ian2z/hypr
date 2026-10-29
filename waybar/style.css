@@ -1,189 +1,156 @@
-@import "cream.css";
+/* =============================================================================
+   WAYBAR STYLE - MINIMALIST MONOCHROME / ACCENTS
+   ============================================================================= */
 
-/* Configuração Geral */
+/* Neutrals & Grays - Soft and professional */
+@define-color black   #11111b; /* Background for modules */
+@define-color gray1   #bac2de; /* Primary text / Light gray */
+@define-color gray2   #9399b2; /* Secondary text / Muted gray */
+@define-color gray3   #585b70; /* Borders / Dividers */
+@define-color ice     #cdd6f4; /* Highlights / Very light gray */
+
+/* Calm Blues - Muted and peaceful */
+@define-color calm    #89b4fa; /* Soft Lavender Blue */
+@define-color pacific #74c7ec; /* Calm Sky Blue */
+@define-color ocean   #31748f; /* Deep Muted Ocean Blue */
+
+/* Status Colors - Visible but not jarring */
+@define-color red     #f38ba8; /* Warning / Critical */
+@define-color orange  #fab387; /* Alert / Attention (Alarm) */
+@define-color green   #a6e3a1; /* Success / OK */
+
 * {
-    font-family: "JetBrainsMono Nerd Font", "JetBrains Mono", sans-serif;
-    font-size: 13px;
-    font-weight: bold;
+    border: none;
+    border-radius: 0;
+    font-family: "MesloLGS Nerd Font", "FontAwesome", sans-serif;
+    font-size: 12px;
+    font-weight: 600;
     min-height: 0;
 }
 
+/* Barra Principal - Contínua, plana e minimalista */
 window#waybar {
-    background-color: transparent;
+    background-color: @black;
+    border-bottom: 1px solid @gray3;
+    color: @gray1;
 }
 
-.modules-left,
-.modules-center,
-#info {
-    background-color: alpha(@coffy, 0.85); /* @coffy (fundo escuro) com transparência */
-    border: 1px solid @sepia;              /* Bordas cor de sepia */
-    border-radius: 14px;
-    padding: 2px 10px;
-    margin-top: 5px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-.modules-left {
-    margin-left: 10px;
-}
-
-#info {
-    margin-right: 10px;
-}
-
-#custom-icon {
-    color: @caramel;
-}
-
-#custom-separator {
-    color: @sepia;
-    padding: 0 4px;
+/* Relógio / Data (Direita) */
+#clock {
+    color: @ice;
+    font-weight: bold;
+    padding: 0 12px;
+    border-left: 1px solid @gray3;
     margin: 4px 0;
 }
 
-/* Espaçamento entre módulos dentro das ilhas */
-#workspaces,
-#custom-quickshell,
-#mpris,
-#clock,
-#custom-updates,
-#bluetooth,
-#cpu,
-#temperature,
-#pulseaudio,
-#network,
-#battery,
-#custom-powermenu {
-    padding: 0 8px;
-    margin: 4px 0;
-}
-
+/* Botão Painel de Controle (Quickshell - Ícone Arch) */
 #custom-quickshell {
-    color: @caramel;
-    font-size: 15px;
-    border-right: 1px solid @sepia;
-    padding-right: 10px;
-    margin-right: 4px;
-    transition: all 0.2s ease;
+    color: @calm;
+    font-size: 14px;
+    padding: 0 12px;
+    border-right: 1px solid @gray3;
+    margin: 4px 0;
+    transition: all 0.15s ease-in-out;
 }
 
 #custom-quickshell:hover {
-    color: @cream;
+    color: @ice;
+    background-color: rgba(88, 91, 112, 0.25);
+}
+
+/* MPRIS (Spotify / Mídia - Esquerda) */
+#mpris {
+    color: @gray1;
+    padding: 0 12px;
+    border-right: 1px solid @gray3;
+    margin: 4px 0;
+}
+
+#mpris.paused {
+    color: @gray2;
 }
 
 /* Workspaces */
-#workspaces button {
-    padding: 0 8px;
-    color: @sand;
+#workspaces {
     background-color: transparent;
-    border: none;
-    box-shadow: none;
-    text-shadow: none;
-    border-radius: 8px;
-    transition: all 0.3s ease;
+    padding: 0;
+    margin: 0;
+}
+
+#workspaces button {
+    padding: 0 10px;
+    color: @gray2;
+    background-color: transparent;
+    border-radius: 0;
+    border-bottom: 2px solid transparent;
+    transition: all 0.15s ease-in-out;
 }
 
 #workspaces button:hover {
-    color: @caramel;
-    background-color: @surface1;
-    border: none;
-    box-shadow: none;
+    color: @ice;
+    background-color: rgba(88, 91, 112, 0.25);
 }
 
 #workspaces button.active {
-    color: @coffy;
-    background-color: @caramel;
-    border-radius: 8px;
-    min-width: 30px;
+    color: @ice;
+    background-color: rgba(88, 91, 112, 0.35);
+    border-bottom: 2px solid @ice;
 }
 
 #workspaces button.urgent {
-    color: @coffy;
+    color: @black;
     background-color: @red;
+    border-bottom: 2px solid @red;
 }
 
-/* Módulos de Informação */
-#clock {
-    color: @caramel;
+/* Módulos da Direita */
+#pulseaudio,
+#tray {
+    color: @gray1;
+    padding: 0 10px;
+    border-left: 1px solid @gray3;
+    margin: 4px 0;
 }
 
-#mpris {
-    color: @cream;
-    border-left: 1px solid @sepia;
-    margin-left: 10px;
+/* Atualizações do Sistema */
+#custom-updates.has-updates {
+    color: @calm;
 }
 
-#custom-updates {
-    color: @caramel;
+#custom-updates.updated {
+    color: @gray2;
 }
 
-#bluetooth {
-    color: @cream;
-}
-
-#bluetooth.connected {
-    color: @cream;
-}
-
-#cpu {
-    color: @cream;
-}
-
-#temperature {
-    color: @cream;
-}
-
-#temperature.critical {
-    color: @red;
-}
-
-#pulseaudio {
-    color: @cream;
-}
-
+/* Áudio & Microfone */
 #pulseaudio.muted {
-    color: @sepia;
-}
-
-#network {
-    color: @cream;
-}
-
-#network.disconnected {
     color: @red;
 }
 
-/* Bateria */
-#battery {
-    color: @green;
+#pulseaudio.source-muted {
+    color: @red;
 }
 
-#battery.warning {
+/* Alertas e Estados Críticos (Cores só para urgência) */
+#cpu.warning,
+#memory.warning {
     color: @orange;
 }
 
-#battery.critical:not(.charging) {
+#cpu.critical,
+#memory.critical {
     color: @red;
-    animation-name: blink;
-    animation-duration: 0.8s;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
-    animation-direction: alternate;
 }
 
-#battery.charging {
-    color: @green;
-    text-decoration: underline;
+/* Bandeja do Sistema (Tray) */
+#tray {
+    padding-right: 12px;
 }
 
-#custom-powermenu {
-    color: @cream;
+#tray > .passive {
+    -gtk-icon-effect: dim;
 }
 
-/* Animações */
-@keyframes blink {
-    to {
-        background-color: @red;
-        color: @coffy;
-    }
+#tray > .needs-attention {
+    -gtk-icon-effect: highlight;
 }

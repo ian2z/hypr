@@ -4,25 +4,26 @@
 
 local mainMod     = "SUPER"
 local terminal    = "kitty"
-local fileManager = "nautilus"
+local fileManager = "command -v dolphin >/dev/null 2>&1 && dolphin || nautilus"
 local browser     = "zen-browser"
 
 local home        = os.getenv("HOME")
-local menu        = home .. "/.config/rofi/launchers/type-1/launcher.sh"
-local volumemenu  = home .. "/.config/rofi/applets/bin/volume.sh"
-local powermenu   = home .. "/.config/rofi/powermenu/type-1/powermenu.sh"
+local menu        = home .. "/.config/rofi/launcher.sh"
+local volumemenu  = home .. "/.config/quickshell/toggle.sh"
+local powermenu   = home .. "/.config/quickshell/powermenu/toggle.sh"
 local waybar_ref  = home .. "/.config/waybar/scripts/refresh.sh"
 
 --------------------------------------------------------------------------------
 -- Aplicativos e Sistema
 --------------------------------------------------------------------------------
 hl.bind(mainMod .. " + T", hl.dsp.exec_cmd(terminal))
+hl.bind(mainMod .. " + Q", hl.dsp.exec_cmd(terminal))
 hl.bind(mainMod .. " + C", hl.dsp.window.close())
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu))
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen({ mode = "maximized", action = "toggle" }))
-hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch exit"))
+hl.bind(mainMod .. " + M", hl.dsp.exec_cmd(powermenu))
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd(browser))
 hl.bind(mainMod .. " + P", hl.dsp.exec_cmd(powermenu))
 hl.bind(mainMod .. " + O", hl.dsp.exec_cmd(volumemenu))

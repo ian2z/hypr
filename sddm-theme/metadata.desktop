@@ -1,0 +1,11 @@
+[SddmGreeterTheme]
+Name=Minimal Square
+Description=Minimalist square dark theme matching Waybar and Quickshell
+Author=Ian
+Type=sddm-theme
+Version=1.0
+MainScript=Main.qml
+ConfigFile=theme.conf
+Theme-Id=minimal-square
+Theme-API=2.0
+QtVersion=6

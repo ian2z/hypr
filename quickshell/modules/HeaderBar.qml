@@ -7,12 +7,12 @@ import "../services"
 RowLayout {
     id: root
     Layout.fillWidth: true
-    spacing: 10
+    spacing: 6
 
     // Perfil / Identificação
     Rectangle {
         Layout.preferredHeight: 36
-        Layout.preferredWidth: profileRow.implicitWidth + 20
+        Layout.preferredWidth: profileRow.implicitWidth + 18
         radius: Theme.radiusMedium
         color: Theme.cardBackground
         border.color: Theme.borderSubtle
@@ -21,7 +21,7 @@ RowLayout {
         RowLayout {
             id: profileRow
             anchors.centerIn: parent
-            spacing: 8
+            spacing: 7
 
             Text {
                 text: ""
@@ -33,7 +33,7 @@ RowLayout {
             Text {
                 text: "ian"
                 font.family: Theme.fontFamily
-                font.pixelSize: 13
+                font.pixelSize: 12
                 font.bold: true
                 color: Theme.text
             }
@@ -42,54 +42,130 @@ RowLayout {
 
     Item { Layout.fillWidth: true }
 
-    // Status de Bateria (UPower)
+    // Uso de Hardware (CPU & RAM) - Clicar abre btop
     Rectangle {
         Layout.preferredHeight: 36
-        Layout.preferredWidth: batRow.implicitWidth + 18
+        Layout.preferredWidth: hwRow.implicitWidth + 18
+        radius: Theme.radiusMedium
+        color: hwMouse.containsMouse ? Theme.surface : Theme.cardBackground
+        border.color: hwMouse.containsMouse ? Theme.primary : Theme.borderSubtle
+        border.width: 1
+
+        Behavior on color { ColorAnimation { duration: 150 } }
+
+        RowLayout {
+            id: hwRow
+            anchors.centerIn: parent
+            spacing: 10
+
+            // CPU
+            RowLayout {
+                spacing: 4
+                Text {
+                    text: ""
+                    font.family: Theme.fontFamily
+                    font.pixelSize: 12
+                    color: SystemService.cpuPercent >= 85
+                        ? Theme.red
+                        : (SystemService.cpuPercent >= 70 ? Theme.orange : Theme.primary)
+                }
+                Text {
+                    text: SystemService.cpuPercent + "%"
+                    font.family: Theme.fontFamily
+                    font.pixelSize: 11
+                    font.bold: true
+                    color: Theme.textMuted
+                }
+            }
+
+            // Divisor sutil
+            Rectangle {
+                width: 1
+                height: 14
+                color: Theme.borderSubtle
+            }
+
+            // RAM
+            RowLayout {
+                spacing: 4
+                Text {
+                    text: "󰘚"
+                    font.family: Theme.fontFamily
+                    font.pixelSize: 12
+                    color: SystemService.memPercent >= 90
+                        ? Theme.red
+                        : (SystemService.memPercent >= 80 ? Theme.orange : Theme.accent)
+                }
+                Text {
+                    text: SystemService.memPercent + "%"
+                    font.family: Theme.fontFamily
+                    font.pixelSize: 11
+                    font.bold: true
+                    color: Theme.textMuted
+                }
+            }
+        }
+
+        MouseArea {
+            id: hwMouse
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            onClicked: {
+                SystemService.openSystemMonitor()
+                Qt.quit()
+            }
+        }
+    }
+
+    // Uptime do Sistema
+    Rectangle {
+        Layout.preferredHeight: 36
+        Layout.preferredWidth: upRow.implicitWidth + 16
         radius: Theme.radiusMedium
         color: Theme.cardBackground
         border.color: Theme.borderSubtle
         border.width: 1
 
         RowLayout {
-            id: batRow
+            id: upRow
             anchors.centerIn: parent
-            spacing: 6
+            spacing: 5
 
             Text {
-                text: SystemService.batteryIcon
+                text: "󰔛"
                 font.family: Theme.fontFamily
-                font.pixelSize: 13
-                color: SystemService.batteryPercent <= 20 && !SystemService.isCharging
-                    ? Theme.red
-                    : Theme.green
+                font.pixelSize: 12
+                color: Theme.primary
             }
 
             Text {
-                text: SystemService.batteryPercent + "%"
+                text: SystemService.uptimeText
                 font.family: Theme.fontFamily
-                font.pixelSize: 12
+                font.pixelSize: 11
                 font.bold: true
                 color: Theme.textMuted
             }
         }
     }
 
-    // Botão Bloquear Sessão (Hyprlock / loginctl)
+    // Botão Bloquear Sessão (loginctl lock-session)
     Rectangle {
         Layout.preferredWidth: 36
         Layout.preferredHeight: 36
         radius: Theme.radiusMedium
         color: lockMouse.containsMouse ? Theme.surface : Theme.cardBackground
-        border.color: Theme.borderSubtle
+        border.color: lockMouse.containsMouse ? Theme.primary : Theme.borderSubtle
         border.width: 1
+
+        Behavior on color { ColorAnimation { duration: 150 } }
 
         Text {
             anchors.centerIn: parent
             text: "󰌾"
             font.family: Theme.fontFamily
             font.pixelSize: 15
-            color: Theme.textMuted
+            color: lockMouse.containsMouse ? Theme.text : Theme.textMuted
         }
 
         MouseArea {
@@ -97,11 +173,14 @@ RowLayout {
             anchors.fill: parent
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
-            onClicked: Quickshell.execDetached(["loginctl", "lock-session"])
+            onClicked: {
+                Quickshell.execDetached(["loginctl", "lock-session"])
+                Qt.quit()
+            }
         }
     }
 
-    // Botão Powermenu (Rofi)
+    // Botão Powermenu (Quickshell Powermenu)
     Rectangle {
         Layout.preferredWidth: 36
         Layout.preferredHeight: 36
@@ -127,7 +206,8 @@ RowLayout {
             cursorShape: Qt.PointingHandCursor
             onClicked: {
                 var home = Quickshell.env("HOME")
-                Quickshell.execDetached([home + "/.config/rofi/powermenu/type-1/powermenu.sh"])
+                Quickshell.execDetached(["sh", "-c", "sleep 0.08 && quickshell -p \"" + home + "/.config/quickshell/powermenu/shell.qml\""])
+                Qt.quit()
             }
         }
     }

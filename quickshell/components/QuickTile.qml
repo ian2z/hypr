@@ -17,6 +17,7 @@ Rectangle {
     signal secondaryClicked()
 
     Layout.fillWidth: true
+    Layout.preferredWidth: 1
     implicitHeight: 58
     radius: Theme.radiusMedium
 
@@ -37,12 +38,14 @@ Rectangle {
         anchors.rightMargin: 8
         spacing: 10
 
-        // Círculo do Ícone
+        // Quadrado do Ícone
         Rectangle {
             Layout.preferredWidth: 36
             Layout.preferredHeight: 36
-            radius: 10
+            radius: Theme.radiusSmall
             color: root.active ? root.activeColor : Theme.surface
+            border.width: root.active ? 0 : 1
+            border.color: Theme.borderSubtle
 
             Behavior on color { ColorAnimation { duration: 150 } }
 
@@ -63,7 +66,7 @@ Rectangle {
             Text {
                 text: root.title
                 font.family: Theme.fontFamily
-                font.pixelSize: 12
+                font.pixelSize: 11
                 font.bold: true
                 color: Theme.text
                 elide: Text.ElideRight
@@ -80,12 +83,12 @@ Rectangle {
             }
         }
 
-        // Botão secundário opcional (abrir menu / atualizar)
+        // Botão secundário opcional (abrir menu / alternar opção / atualizar)
         Rectangle {
             visible: root.hasSecondaryAction
             Layout.preferredWidth: 26
             Layout.preferredHeight: 26
-            radius: 7
+            radius: Theme.radiusSmall
             color: secMouse.containsMouse ? Theme.hoverOverlay : "transparent"
             z: 2
 

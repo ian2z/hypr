@@ -71,8 +71,10 @@ Rectangle {
             Rectangle {
                 Layout.preferredHeight: 24
                 Layout.preferredWidth: badgeRow.implicitWidth + 14
-                radius: 7
+                radius: Theme.radiusSmall
                 color: Theme.surface
+                border.width: 1
+                border.color: Theme.borderSubtle
 
                 RowLayout {
                     id: badgeRow
@@ -109,8 +111,10 @@ Rectangle {
                 visible: root.playersList.length > 1
                 Layout.preferredWidth: 24
                 Layout.preferredHeight: 24
-                radius: 7
+                radius: Theme.radiusSmall
                 color: switchPlayerMouse.containsMouse ? Theme.surfaceActive : Theme.surface
+                border.width: 1
+                border.color: Theme.borderSubtle
 
                 Text {
                     anchors.centerIn: parent

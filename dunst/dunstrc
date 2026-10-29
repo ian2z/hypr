@@ -1,49 +1,47 @@
-# Dunst Config - Sepia
-
-# Base: #2C1A14
-# Text: #EFE6DC
-# Caramel: #8C7A6B
-# Green: #a6e3a1
-# Red Alert: #f38ba8
-# Sand: #D4A373
+# =============================================================================
+# DUNST CONFIGURATION - CACHYOS / IAN
+# Paleta Waybar & SDDM (MesloLGS Nerd Font + Minimal Square)
+# =============================================================================
 
 [global]
-    ### Display ###
+    ### Display & Monitor ###
     monitor = 0
     follow = mouse
     
-    ### Geometry ###
-    width = 350
+    ### Geometria ###
+    width = (0, 360)
     height = (0, 300)
     origin = top-right
-    offset = (20, 50)
+    offset = (16, 46)
     scale = 0
     notification_limit = 5
 
-    ### Progress bar ###
+    ### Barra de Progresso ###
     progress_bar = true
-    progress_bar_height = 10
+    progress_bar_height = 8
     progress_bar_frame_width = 1
     progress_bar_min_width = 150
-    progress_bar_max_width = 350
-    progress_bar_corner_radius = 10
+    progress_bar_max_width = 360
+    progress_bar_corner_radius = 0
     
-    ### UI Elements ###
-    indicate_hidden = yes
-    transparency = 0
-    separator_height = 2
-    padding = 12
-    horizontal_padding = 12
-    text_icon_padding = 10
+    ### Estilo Minimal Square & Espaçamento ###
+    corner_radius = 0
+    corners = all
     frame_width = 2
-    gap_size = 5
+    gap_size = 6
+    separator_height = 1
     separator_color = frame
+    padding = 12
+    horizontal_padding = 14
+    text_icon_padding = 12
+    transparency = 0
+    indicate_hidden = yes
     sort = yes
     idle_threshold = 120
 
-    ### Text ###
-    font = JetBrains Mono 10
-    line_height = 0
+    ### Tipografia ###
+    font = MesloLGS Nerd Font 10
+    line_height = 2
     markup = full
     format = "<b>%s</b>\n%b"
     alignment = left
@@ -55,50 +53,56 @@
     hide_duplicate_count = false
     show_indicators = yes
 
-    ### Icons ###
+    ### Ícones ###
     enable_recursive_icon_lookup = true
     icon_theme = "Adwaita"
     icon_position = left
     min_icon_size = 32
-    max_icon_size = 64
+    max_icon_size = 48
 
-    ### History ###
+    ### Histórico ###
     sticky_history = yes
     history_length = 20
 
-    ### Advanced ###
-    dmenu = /usr/bin/dmenu -p dunst:
+    ### Comportamento e Interação ###
     browser = /usr/bin/xdg-open
     always_run_script = true
-    corner_radius = 10
-    corners = all
     mouse_left_click = close_current
     mouse_middle_click = do_action, close_current
     mouse_right_click = close_all
 
+# =============================================================================
+# Níveis de Urgência (Paleta Waybar)
+# =============================================================================
+
 [urgency_low]
-    # Cores Catppuccin Mocha
-    background = "#1e1e2e"
-    foreground = "#D4A373"
-    frame_color = "#EFE6DC"
+    background = "#11111b"
+    foreground = "#bac2de"
+    frame_color = "#585b70"
+    highlight = "#89b4fa"
     timeout = 5
     default_icon = dialog-information
 
 [urgency_normal]
-    background = "#2C1A14"
-    foreground = "#D4A373"
-    frame_color = "#EFE6DC"
-    timeout = 10
+    background = "#11111b"
+    foreground = "#cdd6f4"
+    frame_color = "#89b4fa"
+    highlight = "#89b4fa"
+    timeout = 8
     default_icon = dialog-information
 
 [urgency_critical]
-    background = "#2C1A14"
-    foreground = "#D4A373"
+    background = "#11111b"
+    foreground = "#cdd6f4"
     frame_color = "#f38ba8"
+    highlight = "#f38ba8"
     timeout = 0
     default_icon = dialog-warning
 
-# Regras customizadas úteis
+# =============================================================================
+# Regras Customizadas (Agrupamento / Stack Tags)
+# =============================================================================
+
 [backlight]
     summary = "Backlight"
     set_stack_tag = "backlight"
@@ -106,3 +110,7 @@
 [volume]
     summary = "Volume"
     set_stack_tag = "volume"
+
+[music]
+    summary = "*Spotify*"
+    set_stack_tag = "media"

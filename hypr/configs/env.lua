@@ -1,10 +1,10 @@
 -- =============================================================================
--- Environment Variables & Dark Mode Settings
+-- Environment Variables & Dark Mode Settings (Desktop - GTX 960)
 -- =============================================================================
 
--- GTK Dark Theme via gsettings
-hl.exec_cmd('gsettings set org.gnome.desktop.interface gtk-theme "adw-gtk3-dark"')
-hl.exec_cmd('gsettings set org.gnome.desktop.interface color-scheme "prefer-dark"')
+-- GTK Dark Theme via Lua padrão (não depende da tabela hl)
+os.execute('gsettings set org.gnome.desktop.interface gtk-theme "adw-gtk3-dark"')
+os.execute('gsettings set org.gnome.desktop.interface color-scheme "prefer-dark"')
 
 -- Desktop / Session Info
 hl.env("XDG_CURRENT_DESKTOP", "Hyprland")
@@ -24,3 +24,9 @@ hl.env("QT_STYLE_OVERRIDE", "kvantum")
 -- GTK / Libadwaita Preference
 hl.env("GTK_APPLICATION_PREFER_DARK_THEME", "1")
 hl.env("GTK_APPEARANCE_PREFERENCE", "dark")
+
+-- NVIDIA Settings (Desktop GTX 960)
+hl.env("LIBVA_DRIVER_NAME", "nvidia")
+hl.env("__GLX_VENDOR_LIBRARY_NAME", "nvidia")
+hl.env("NVD_BACKEND", "direct")
+hl.env("ELECTRON_OZONE_PLATFORM_HINT", "auto")

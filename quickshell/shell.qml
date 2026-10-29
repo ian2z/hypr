@@ -37,12 +37,12 @@ Scope {
             Keys.onEscapePressed: Qt.quit()
         }
 
-        // Card Flutuante do Painel de Controle
+        // Card Flutuante do Painel de Controle (alinhado abaixo da Waybar de 30px)
         Rectangle {
             id: backgroundCard
-            x: 10
-            y: 50
-            width: 380
+            x: 8
+            y: 38
+            width: 420
             height: mainLayout.implicitHeight + 28
 
             radius: Theme.radiusLarge
@@ -69,13 +69,13 @@ Scope {
                 anchors.margins: 14
                 spacing: 12
 
-                // 1. Cabeçalho Geral (Usuário, Bateria, Bloqueio e Powermenu)
+                // 1. Cabeçalho Geral (Usuário, Uptime, Bloqueio e Powermenu)
                 HeaderBar {}
 
-                // 2. Acessos Rápidos (Rede Wi-Fi/Cabeada, Bluetooth, Updates, Não Perturbe)
+                // 2. Acessos Rápidos (Rede Cabeada, Hyprsunset, Updates, Não Perturbe)
                 QuickSettingsGrid {}
 
-                // 3. Controle de Volume Inteligente (Alto-falantes / Fone + Seletor de Saída)
+                // 3. Controle de Volume Inteligente (Monitor / Fone + Microfone + Seletor de Saída)
                 AudioPanel {}
 
                 // 4. Player do Spotify / Mídia + Visualizador de Espectro em Tempo Real

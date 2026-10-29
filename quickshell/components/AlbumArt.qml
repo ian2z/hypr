@@ -14,6 +14,8 @@ Item {
         anchors.fill: parent
         radius: Theme.radiusMedium
         color: Theme.surface
+        border.color: Theme.borderSubtle
+        border.width: 1
         clip: true
 
         Image {
@@ -31,7 +33,7 @@ Item {
             anchors.centerIn: parent
             text: ""
             font.pixelSize: root.size * 0.4
-            font.family: "Nerd Font"
+            font.family: Theme.fontFamily
             color: Theme.primary
             visible: coverImage.status !== Image.Ready
         }
