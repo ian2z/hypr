@@ -1,13 +1,22 @@
 configuration {
-    modi:                       "drun,run,filebrowser";
-    show-icons:                 true;
-    display-drun:               "";
+    modi:                       "drun,run,filebrowser,window";
+    show-icons:                 false;
+    display-drun:               "󰣇 ";
     display-run:                "";
     display-filebrowser:        "";
+    display-window:             "";
     drun-display-format:        "{name}";
     window-format:              "{w} · {c} · {t}";
     font:                       "MesloLGS Nerd Font 11";
-    icon-theme:                 "breeze-dark";
+    case-sensitive:             false;
+    matching:                   "fuzzy";
+    sort:                       true;
+    sorting-method:             "fzf";
+    cycle:                      true;
+    hover-select:               true;
+    me-select-entry:            "";
+    me-accept-entry:            "MousePrimary";
+    steal-focus:                true;
 }
 
 * {
@@ -37,7 +46,7 @@ window {
     border:           2px solid;
     border-color:     @border-color;
     border-radius:    0px;
-    width:            620px;
+    width:            500px;
     location:         center;
     anchor:           center;
     x-offset:         0px;
@@ -77,22 +86,23 @@ entry {
 listview {
     background-color: transparent;
     columns:          1;
-    lines:            8;
+    lines:            7;
     cycle:            true;
     dynamic:          true;
+    fixed-height:     false;
     scrollbar:        false;
     layout:           vertical;
-    padding:          8px;
-    spacing:          4px;
+    padding:          6px;
+    spacing:          2px;
 }
 
 element {
     background-color: transparent;
     text-color:       @fg-secondary;
     border-radius:    0px;
-    padding:          8px 12px;
-    spacing:          12px;
-    children:         [ "element-icon", "element-text" ];
+    padding:          7px 12px;
+    spacing:          0px;
+    children:         [ "element-text" ];
 }
 
 element normal.normal,
