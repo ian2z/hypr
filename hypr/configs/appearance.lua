@@ -60,3 +60,13 @@ hl.window_rule({
     float = true,
 })
 
+-- Otimizações de composição para o Sober (Roblox) na GTX 960
+hl.window_rule({
+    name  = "sober-optimizations",
+    match = { class = "org.vinegarhq.Sober" },
+    no_blur      = true,
+    opaque       = true,
+    idle_inhibit = "focus",
+})
+
+

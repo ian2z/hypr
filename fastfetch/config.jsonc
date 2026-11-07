@@ -2,12 +2,12 @@
     "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
     "logo": {
         "type": "file",
-        "source": "~/ascii/lula.txt",
+        "source": "~/ascii/stars2.txt",
         "color": {
             "1": "38;2;137;180;250"
         },
         "padding": {
-            "top": 5,
+            "top": 1,
             "left": 3,
             "right": 3
         }
