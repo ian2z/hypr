@@ -11,7 +11,7 @@ local home        = os.getenv("HOME")
 local menu        = home .. "/.config/rofi/launcher.sh"
 local volumemenu  = home .. "/.config/quickshell/toggle.sh"
 local powermenu   = home .. "/.config/quickshell/powermenu/toggle.sh"
-local waybar_ref  = home .. "/.config/waybar/scripts/refresh.sh"
+-- local waybar_ref  = home .. "/.config/waybar/scripts/refresh.sh"
 
 --------------------------------------------------------------------------------
 -- Aplicativos e Sistema
@@ -27,7 +27,7 @@ hl.bind(mainMod .. " + M", hl.dsp.exec_cmd(powermenu))
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd(browser))
 hl.bind(mainMod .. " + P", hl.dsp.exec_cmd(powermenu))
 hl.bind(mainMod .. " + O", hl.dsp.exec_cmd(volumemenu))
-hl.bind(mainMod .. " + W", hl.dsp.exec_cmd(waybar_ref))
+-- hl.bind(mainMod .. " + W", hl.dsp.exec_cmd(waybar_ref))
 hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("loginctl lock-session"))
 
 --------------------------------------------------------------------------------

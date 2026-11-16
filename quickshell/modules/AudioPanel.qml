@@ -10,7 +10,7 @@ Rectangle {
 
     Layout.fillWidth: true
     implicitHeight: mainCol.implicitHeight + 24
-    radius: Theme.radiusMedium
+    radius: Theme.radiusLarge
     color: Theme.cardBackground
     border.color: Theme.borderSubtle
     border.width: 1
@@ -34,7 +34,7 @@ Rectangle {
             Rectangle {
                 Layout.preferredWidth: 36
                 Layout.preferredHeight: 36
-                radius: Theme.radiusSmall
+                radius: 12
                 color: AudioService.muted
                     ? Theme.surface
                     : (muteMouse.containsMouse ? Theme.accent : Theme.primary)
@@ -77,7 +77,7 @@ Rectangle {
 
                 Text {
                     text: AudioService.muted
-                        ? "Silenciado (" + AudioService.activeDeviceCategory + ")"
+                        ? "Muted (" + AudioService.activeDeviceCategory + ")"
                         : AudioService.activeDeviceCategory
                     font.family: Theme.fontFamily
                     font.pixelSize: 10
@@ -100,7 +100,7 @@ Rectangle {
             Rectangle {
                 Layout.preferredWidth: 28
                 Layout.preferredHeight: 28
-                radius: Theme.radiusSmall
+                radius: height / 2
                 color: micMouse.containsMouse ? Theme.surface : "transparent"
                 border.width: AudioService.micMuted ? 1 : 0
                 border.color: Theme.red
@@ -126,7 +126,7 @@ Rectangle {
             Rectangle {
                 Layout.preferredWidth: 28
                 Layout.preferredHeight: 28
-                radius: Theme.radiusSmall
+                radius: height / 2
                 color: expandMouse.containsMouse || root.expanded ? Theme.surface : "transparent"
 
                 Text {
@@ -150,7 +150,7 @@ Rectangle {
             Rectangle {
                 Layout.preferredWidth: 28
                 Layout.preferredHeight: 28
-                radius: Theme.radiusSmall
+                radius: height / 2
                 color: mixerMouse.containsMouse ? Theme.surface : "transparent"
 
                 Text {
@@ -182,13 +182,13 @@ Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 width: parent.width
                 height: 8
-                radius: Theme.radiusSmall
+                radius: height / 2
                 color: Theme.surface
 
                 Rectangle {
                     id: volumeFill
                     height: parent.height
-                    radius: parent.radius
+                    radius: height / 2
                     color: AudioService.muted ? Theme.textSubtle : Theme.primary
                     width: {
                         var clamped = Math.min(Math.max(AudioService.volume, 0.0), 1.0)
@@ -233,7 +233,7 @@ Rectangle {
             }
 
             Text {
-                text: "DISPOSITIVOS DE SAÍDA"
+                text: "OUTPUT DEVICES"
                 font.family: Theme.fontFamily
                 font.pixelSize: 10
                 font.bold: true
@@ -253,7 +253,7 @@ Rectangle {
 
                     Layout.fillWidth: true
                     implicitHeight: 36
-                    radius: Theme.radiusSmall
+                    radius: 10
                     color: sinkMouse.containsMouse
                         ? Theme.surfaceActive
                         : (isSelected ? Theme.surface : "transparent")

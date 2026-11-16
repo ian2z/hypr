@@ -13,30 +13,23 @@ Rectangle {
 
     // Prioriza Spotify por padrão, mas permite alternar entre outros players MPRIS ativos
     readonly property var activePlayer: {
-        if (playersList.length === 0) return null
-        if (selectedPlayerIndex >= 0 && selectedPlayerIndex < playersList.length) {
-            return playersList[selectedPlayerIndex]
-        }
+        if (!playersList || playersList.length === 0) return null
+        // Exclusivo para o Spotify
         for (var i = 0; i < playersList.length; i++) {
-            var id = (playersList[i].identity || "").toLowerCase()
-            if (id.indexOf("spotify") !== -1) {
-                return playersList[i]
+            var p = playersList[i]
+            if (p) {
+                var id = (p.identity || "").toLowerCase()
+                var entry = (p.desktopEntry || "").toLowerCase()
+                if (id.indexOf("spotify") !== -1 || entry.indexOf("spotify") !== -1) {
+                    return p
+                }
             }
         }
-        return playersList[0]
+        return null
     }
 
-    readonly property string playerName: {
-        if (!activePlayer || !activePlayer.identity) return "Spotify"
-        return activePlayer.identity
-    }
-
-    readonly property string playerIcon: {
-        var id = playerName.toLowerCase()
-        if (id.indexOf("spotify") !== -1) return ""
-        if (id.indexOf("firefox") !== -1 || id.indexOf("zen") !== -1) return "󰈹"
-        return "󰝚"
-    }
+    readonly property string playerName: "Spotify"
+    readonly property string playerIcon: ""
 
     function nextPlayer() {
         if (playersList.length <= 1) return
@@ -49,7 +42,7 @@ Rectangle {
 
     Layout.fillWidth: true
     implicitHeight: cardCol.implicitHeight + 24
-    radius: Theme.radiusMedium
+    radius: Theme.radiusLarge
     color: Theme.cardBackground
     border.color: Theme.borderSubtle
     border.width: 1
@@ -71,7 +64,7 @@ Rectangle {
             Rectangle {
                 Layout.preferredHeight: 24
                 Layout.preferredWidth: badgeRow.implicitWidth + 14
-                radius: Theme.radiusSmall
+                radius: height / 2
                 color: Theme.surface
                 border.width: 1
                 border.color: Theme.borderSubtle
@@ -106,12 +99,12 @@ Rectangle {
                 Layout.preferredHeight: 20
             }
 
-            // Botão para alternar entre players ativos (ex: Spotify <-> Zen Browser)
+            // Botão para alternar entre players (desativado: foco exclusivo no Spotify)
             Rectangle {
-                visible: root.playersList.length > 1
+                visible: false
                 Layout.preferredWidth: 24
                 Layout.preferredHeight: 24
-                radius: Theme.radiusSmall
+                radius: height / 2
                 color: switchPlayerMouse.containsMouse ? Theme.surfaceActive : Theme.surface
                 border.width: 1
                 border.color: Theme.borderSubtle
@@ -152,7 +145,7 @@ Rectangle {
                 Text {
                     text: root.activePlayer && root.activePlayer.trackTitle
                         ? root.activePlayer.trackTitle
-                        : "Nenhuma mídia ativa"
+                        : "No media playing"
                     font.family: Theme.fontFamily
                     font.pixelSize: 13
                     font.bold: true
@@ -167,7 +160,7 @@ Rectangle {
                         ? root.activePlayer.trackArtist
                         : (root.activePlayer && root.activePlayer.artist
                             ? root.activePlayer.artist
-                            : "Abra o Spotify ou player de mídia")
+                            : "Open Spotify to play music")
                     font.family: Theme.fontFamily
                     font.pixelSize: 11
                     color: Theme.textMuted

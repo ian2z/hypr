@@ -29,10 +29,11 @@ QtObject {
     readonly property color borderSubtle: "#66585b70"          // @gray3 translúcido para divisórias internas
     readonly property color hoverOverlay: "#20cdd6f4"
 
-    // Estilo Minimalista 100% Quadrado (igual Waybar, Rofi e Powermenu)
-    readonly property int radiusLarge: 0
-    readonly property int radiusMedium: 0
-    readonly property int radiusSmall: 0
+    // Estilo Moderno / Dynamic Island (Bordas arredondadas e acabamento suave)
+    readonly property int radiusLarge: 16
+    readonly property int radiusMedium: 12
+    readonly property int radiusSmall: 8
+    readonly property int radiusPill: 999
 
     // Fonte Padrão do Sistema
     readonly property string fontFamily: "MesloLGS Nerd Font"

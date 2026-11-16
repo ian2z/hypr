@@ -1,15 +1,47 @@
+//@ pragma UseQApplication
 import QtQuick
-import QtQuick.Layouts
 import Quickshell
+import Quickshell.Io
+import Quickshell.Services.SystemTray
 import "style"
 import "services"
 import "modules"
+import "components"
 
 Scope {
     id: root
 
+    // 1. Reserva de Espaço Exclusivo no Topo
+    // Comunica ao Hyprland/Wayland para manter o gap superior para as janelas (evitando que fiquem sob a Island)
     PanelWindow {
-        id: controlCenterWindow
+        id: topReserveGap
+        anchors {
+            top: true
+            left: true
+            right: true
+        }
+        implicitHeight: 48
+        color: "transparent"
+        exclusionMode: ExclusionMode.Auto
+        mask: Region {} // 100% click-through
+    }
+
+    // 2. Handler IPC para controle remoto da Ilha (SUPER + O expande / recolhe suavemente)
+    IpcHandler {
+        target: "island"
+        function toggle(): string {
+            island.isExpanded = !island.isExpanded
+            if (island.isExpanded) {
+                island.showingHud = false
+                island.showingNotification = false
+            }
+            return island.isExpanded ? "expanded" : "collapsed"
+        }
+    }
+
+    // 3. Janela Principal da Dynamic Island (Overlay flutuante com entrada inteligente)
+    PanelWindow {
+        id: islandWindow
         visible: true
         focusable: true
         aboveWindows: true
@@ -24,63 +56,51 @@ Scope {
 
         color: "transparent"
 
-        // Camada invisível em tela cheia: clicar em qualquer lugar fora do painel fecha o Quickshell
-        MouseArea {
-            anchors.fill: parent
-            acceptedButtons: Qt.AllButtons
-            onPressed: Qt.quit()
+        // Mask de entrada inteligente:
+        // - Compacto: Somente a Island e a cápsula do Tray recebem cliques. O resto da tela fica livre.
+        // - Expandido: Clicar fora recolhe a Island de volta suavemente.
+        mask: Region {
+            item: island.isExpanded ? dismissArea : island
+            regions: [
+                Region {
+                    item: (trayPill.visible && !island.isExpanded) ? trayPill : null
+                }
+            ]
         }
 
-        // Atalho Esc também fecha o painel
+        // Área invisível de clique fora para fechar a expansão
+        MouseArea {
+            id: dismissArea
+            anchors.fill: parent
+            visible: island.isExpanded
+            onClicked: island.isExpanded = false
+        }
+
+        // Tecla ESC recolhe a ilha se estiver expandida
         Item {
             focus: true
-            Keys.onEscapePressed: Qt.quit()
+            Keys.onEscapePressed: {
+                if (island.isExpanded) {
+                    island.isExpanded = false
+                }
+            }
         }
 
-        // Card Flutuante do Painel de Controle (alinhado abaixo da Waybar de 30px)
-        Rectangle {
-            id: backgroundCard
-            x: 8
-            y: 38
-            width: 420
-            height: mainLayout.implicitHeight + 28
+        // Dynamic Island principal (Flutuando centralizada no gap superior)
+        DynamicIsland {
+            id: island
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: parent.top
+            anchors.topMargin: 6
+        }
 
-            radius: Theme.radiusLarge
-            color: Theme.backgroundTransparent
-            border.color: Theme.border
-            border.width: 1
-
-            Behavior on height {
-                NumberAnimation { duration: 160; easing.type: Easing.OutQuad }
-            }
-
-            // Absorve cliques dentro do card para não disparar o fechamento do fundo
-            MouseArea {
-                anchors.fill: parent
-                acceptedButtons: Qt.AllButtons
-                hoverEnabled: true
-            }
-
-            ColumnLayout {
-                id: mainLayout
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: parent.top
-                anchors.margins: 14
-                spacing: 12
-
-                // 1. Cabeçalho Geral (Usuário, Uptime, Bloqueio e Powermenu)
-                HeaderBar {}
-
-                // 2. Acessos Rápidos (Rede Cabeada, Hyprsunset, Updates, Não Perturbe)
-                QuickSettingsGrid {}
-
-                // 3. Controle de Volume Inteligente (Monitor / Fone + Microfone + Seletor de Saída)
-                AudioPanel {}
-
-                // 4. Player do Spotify / Mídia + Visualizador de Espectro em Tempo Real
-                MediaCard {}
-            }
+        // Cápsula do System Tray acoplada ao lado direito da Island
+        SystemTrayPill {
+            id: trayPill
+            anchors.left: island.right
+            anchors.leftMargin: 8
+            anchors.verticalCenter: island.verticalCenter
+            visible: SystemTray.items && SystemTray.items.values.length > 0 && !island.isExpanded
         }
     }
 }

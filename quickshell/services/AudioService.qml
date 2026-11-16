@@ -55,10 +55,10 @@ Scope {
     readonly property int micVolumePercent: Math.round(micVolume * 100)
     readonly property bool micMuted: (defaultSource && defaultSource.audio) ? defaultSource.audio.muted : false
     readonly property string micName: {
-        if (!defaultSource) return "Sem Microfone"
-        var desc = defaultSource.description || defaultSource.nickname || defaultSource.name || "Microfone"
+        if (!defaultSource) return "No Microphone"
+        var desc = defaultSource.description || defaultSource.nickname || defaultSource.name || "Microphone"
         if (desc.indexOf("Fifine") !== -1) return "Fifine Microphone"
-        if (desc.indexOf("Starship/Matisse") !== -1) return "Entrada Analógica (Placa-mãe)"
+        if (desc.indexOf("Starship/Matisse") !== -1) return "Analog Input (Motherboard)"
         return desc
     }
 
@@ -84,23 +84,23 @@ Scope {
 
     // Nome amigável de um dispositivo de saída no Desktop
     function sinkDisplayName(node) {
-        if (!node) return "Sem saída de áudio"
-        var desc = node.description || node.nickname || node.name || "Saída de Áudio"
+        if (!node) return "No Audio Output"
+        var desc = node.description || node.nickname || node.name || "Audio Output"
         if (desc.indexOf("24G2") !== -1 || desc.indexOf("GM206") !== -1 || isSoundbarSink(node)) {
             return "Soundbar"
         }
         if (desc.indexOf("Starship/Matisse") !== -1 || desc.indexOf("Built-in Audio") !== -1 || isHeadphoneSink(node)) {
-            return "Fone de Ouvido"
+            return "Headphones"
         }
         return desc
     }
 
     // Categoria descritiva do dispositivo
     function sinkCategoryLabel(node) {
-        if (!node) return "Desconectado"
+        if (!node) return "Disconnected"
         if (isSoundbarSink(node)) return "Monitor (DisplayPort)"
-        if (isHeadphoneSink(node)) return "Saída P2 (Placa-mãe)"
-        return "Saída de Áudio"
+        if (isHeadphoneSink(node)) return "Analog 3.5mm (Motherboard)"
+        return "Audio Output"
     }
 
     // Ícone dinâmico conforme dispositivo e nível de volume
@@ -116,6 +116,18 @@ Scope {
     readonly property string activeDeviceName: sinkDisplayName(defaultSink)
     readonly property string activeDeviceCategory: sinkCategoryLabel(defaultSink)
     readonly property string activeDeviceIcon: sinkIcon(defaultSink, muted, volumePercent)
+    readonly property bool isHeadphone: isHeadphoneSink(defaultSink)
+    readonly property string activeSinkName: activeDeviceName
+
+    function toggleOutput() {
+        if (!audioSinks || audioSinks.length <= 1) return
+        for (var i = 0; i < audioSinks.length; i++) {
+            if (audioSinks[i] !== defaultSink) {
+                selectSink(audioSinks[i])
+                break
+            }
+        }
+    }
 
     // Funções de controle
     function setVolume(newVol) {

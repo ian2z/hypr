@@ -36,14 +36,16 @@ GridLayout {
         onSecondaryClicked: SystemService.cycleSunsetTemp()
     }
 
-    // 3. Checagem de Atualizações (checkupdates / yay)
+    // 3. System Updates (checkupdates / yay)
     QuickTile {
         icon: SystemService.checkingUpdates ? "󰑐" : "󰚰"
-        title: "Atualizações"
+        title: "Updates"
         subtitle: {
-            if (SystemService.checkingUpdates) return "Verificando..."
-            if (SystemService.pendingUpdates > 0) return SystemService.pendingUpdates + " pacotes"
-            return "Atualizado"
+            if (SystemService.checkingUpdates) return "Checking..."
+            if (SystemService.pendingUpdates > 0) {
+                return SystemService.pendingUpdates + (SystemService.pendingUpdates === 1 ? " package" : " packages")
+            }
+            return "Up to date"
         }
         active: SystemService.pendingUpdates > 0
         activeColor: SystemService.pendingUpdates > 0 ? Theme.primary : Theme.green
@@ -53,11 +55,11 @@ GridLayout {
         onSecondaryClicked: SystemService.refreshUpdates()
     }
 
-    // 4. Modo Não Perturbe (Dunst Notifications)
+    // 4. Do Not Disturb (Dunst Notifications)
     QuickTile {
         icon: SystemService.dndEnabled ? "󰂛" : "󰂚"
-        title: "Notificações"
-        subtitle: SystemService.dndEnabled ? "Silencioso" : "Ativas"
+        title: "Notifications"
+        subtitle: SystemService.dndEnabled ? "Do Not Disturb" : "Active"
         active: !SystemService.dndEnabled
         onClicked: SystemService.toggleDnd()
     }

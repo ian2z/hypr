@@ -2,24 +2,36 @@ pragma Singleton
 import QtQuick
 
 QtObject {
-    // Neutrals & Grays (Paleta idêntica ao Waybar)
-    readonly property color black:   "#11111b" // Background
-    readonly property color gray1:   "#bac2de" // Primary text
-    readonly property color gray2:   "#9399b2" // Secondary text
-    readonly property color gray3:   "#585b70" // Borders & Dividers
-    readonly property color ice:     "#cdd6f4" // Highlights & Active
+    // Fundo Principal & Cards (Escuro estilo Ilha Dinâmica OLED)
+    readonly property color background: "#0d0e15"
+    readonly property color cardBackground: "#181926"
+    readonly property color surface: "#222436"
+    readonly property color surfaceActive: "#2d3047"
 
-    // Calm Blues
-    readonly property color calm:    "#89b4fa" // Soft Lavender Blue (Suspend)
-    readonly property color pacific: "#74c7ec" // Calm Sky Blue (Exit / Logout)
-    readonly property color ocean:   "#31748f" // Deep Muted Ocean Blue
+    // Tipografia
+    readonly property color text: "#cdd6f4"
+    readonly property color textMuted: "#bac2de"
+    readonly property color textSubtle: "#9399b2"
+    readonly property color textOnPrimary: "#0d0e15"
 
-    // Status Colors (Cores de urgência/ação)
-    readonly property color red:     "#f38ba8" // Desligar
-    readonly property color orange:  "#fab387" // Reiniciar
-    readonly property color green:   "#a6e3a1" // Sucesso
+    // Bordas & Divisores
+    readonly property color border: "#3d415d"
+    readonly property color borderSubtle: "#2a2d42"
 
-    // Layout
-    readonly property int radius: 0            // Minimalista 100% quadrado
+    // Cores de Ação do Powermenu
+    readonly property color primary: "#89b4fa"   // Soft Lavender Blue
+    readonly property color red:     "#f38ba8"   // Desligar
+    readonly property color orange:  "#fab387"   // Reiniciar
+    readonly property color calm:    "#89b4fa"   // Suspender
+    readonly property color pacific: "#74c7ec"   // Encerrar Sessão (Logout)
+    readonly property color ice:     "#cdd6f4"   // Bloquear
+
+    // Curvaturas Modernas da Ilha
+    readonly property int radiusLarge: 24
+    readonly property int radiusMedium: 16
+    readonly property int radiusSmall: 10
+    readonly property int radiusPill: 999
+
+    // Tipografia Nerd Font
     readonly property string fontFamily: "MesloLGS Nerd Font"
 }

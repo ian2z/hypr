@@ -20,13 +20,13 @@ ColumnLayout {
         id: sliderTrack
         Layout.fillWidth: true
         height: 6
-        radius: Theme.radiusSmall
+        radius: height / 2
         color: Theme.surface
 
         Rectangle {
             id: sliderProgress
             height: parent.height
-            radius: parent.radius
+            radius: height / 2
             color: Theme.primary
             width: {
                 if (!root.player || !root.player.length || root.player.length <= 0) return 0

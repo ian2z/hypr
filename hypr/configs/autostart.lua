@@ -8,11 +8,12 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
 
     -- Daemons e personalizações
-    hl.exec_cmd("waybar")
+    -- hl.exec_cmd("waybar")       -- Aposentado pela Dynamic Island
+    -- hl.exec_cmd("dunst")        -- Aposentado pelo NotificationServer integrado do Quickshell
+    hl.exec_cmd("quickshell")      -- Dynamic Island & Shell Principal
     hl.exec_cmd("hyprpaper")
     hl.exec_cmd("hyprsunset -t 4500")
     hl.exec_cmd("hypridle")
-    hl.exec_cmd("dunst")
     hl.exec_cmd("openrgb --profile branco")
     -- hl.exec_cmd("nm-applet --indicator")
 end)

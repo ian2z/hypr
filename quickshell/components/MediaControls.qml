@@ -12,7 +12,7 @@ Row {
     Rectangle {
         width: 34
         height: 34
-        radius: Theme.radiusSmall
+        radius: height / 2
         color: prevMouse.containsMouse ? Theme.surface : "transparent"
         border.width: prevMouse.containsMouse ? 1 : 0
         border.color: Theme.borderSubtle
@@ -40,9 +40,9 @@ Row {
 
     // Play/Pause Button
     Rectangle {
-        width: 40
+        width: 44
         height: 34
-        radius: Theme.radiusSmall
+        radius: height / 2
         color: playMouse.containsMouse ? Theme.accent : Theme.primary
 
         Text {
@@ -72,7 +72,7 @@ Row {
     Rectangle {
         width: 34
         height: 34
-        radius: Theme.radiusSmall
+        radius: height / 2
         color: nextMouse.containsMouse ? Theme.surface : "transparent"
         border.width: nextMouse.containsMouse ? 1 : 0
         border.color: Theme.borderSubtle

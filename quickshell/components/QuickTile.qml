@@ -19,7 +19,7 @@ Rectangle {
     Layout.fillWidth: true
     Layout.preferredWidth: 1
     implicitHeight: 58
-    radius: Theme.radiusMedium
+    radius: 14
 
     color: {
         if (mainMouse.containsMouse) return Theme.surfaceActive
@@ -42,7 +42,7 @@ Rectangle {
         Rectangle {
             Layout.preferredWidth: 36
             Layout.preferredHeight: 36
-            radius: Theme.radiusSmall
+            radius: 10
             color: root.active ? root.activeColor : Theme.surface
             border.width: root.active ? 0 : 1
             border.color: Theme.borderSubtle
@@ -88,7 +88,7 @@ Rectangle {
             visible: root.hasSecondaryAction
             Layout.preferredWidth: 26
             Layout.preferredHeight: 26
-            radius: Theme.radiusSmall
+            radius: 13
             color: secMouse.containsMouse ? Theme.hoverOverlay : "transparent"
             z: 2
 

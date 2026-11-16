@@ -9,11 +9,13 @@ RowLayout {
     Layout.fillWidth: true
     spacing: 6
 
+    signal collapseRequested()
+
     // Perfil / Identificação
     Rectangle {
-        Layout.preferredHeight: 36
+        Layout.preferredHeight: 34
         Layout.preferredWidth: profileRow.implicitWidth + 18
-        radius: Theme.radiusMedium
+        radius: height / 2
         color: Theme.cardBackground
         border.color: Theme.borderSubtle
         border.width: 1
@@ -26,7 +28,7 @@ RowLayout {
             Text {
                 text: ""
                 font.family: Theme.fontFamily
-                font.pixelSize: 15
+                font.pixelSize: 14
                 color: Theme.primary
             }
 
@@ -44,9 +46,9 @@ RowLayout {
 
     // Uso de Hardware (CPU & RAM) - Clicar abre btop
     Rectangle {
-        Layout.preferredHeight: 36
+        Layout.preferredHeight: 34
         Layout.preferredWidth: hwRow.implicitWidth + 18
-        radius: Theme.radiusMedium
+        radius: height / 2
         color: hwMouse.containsMouse ? Theme.surface : Theme.cardBackground
         border.color: hwMouse.containsMouse ? Theme.primary : Theme.borderSubtle
         border.width: 1
@@ -113,16 +115,16 @@ RowLayout {
             cursorShape: Qt.PointingHandCursor
             onClicked: {
                 SystemService.openSystemMonitor()
-                Qt.quit()
+                root.collapseRequested()
             }
         }
     }
 
     // Uptime do Sistema
     Rectangle {
-        Layout.preferredHeight: 36
+        Layout.preferredHeight: 34
         Layout.preferredWidth: upRow.implicitWidth + 16
-        radius: Theme.radiusMedium
+        radius: height / 2
         color: Theme.cardBackground
         border.color: Theme.borderSubtle
         border.width: 1
@@ -151,9 +153,9 @@ RowLayout {
 
     // Botão Bloquear Sessão (loginctl lock-session)
     Rectangle {
-        Layout.preferredWidth: 36
-        Layout.preferredHeight: 36
-        radius: Theme.radiusMedium
+        Layout.preferredWidth: 34
+        Layout.preferredHeight: 34
+        radius: height / 2
         color: lockMouse.containsMouse ? Theme.surface : Theme.cardBackground
         border.color: lockMouse.containsMouse ? Theme.primary : Theme.borderSubtle
         border.width: 1
@@ -175,16 +177,16 @@ RowLayout {
             cursorShape: Qt.PointingHandCursor
             onClicked: {
                 Quickshell.execDetached(["loginctl", "lock-session"])
-                Qt.quit()
+                root.collapseRequested()
             }
         }
     }
 
     // Botão Powermenu (Quickshell Powermenu)
     Rectangle {
-        Layout.preferredWidth: 36
-        Layout.preferredHeight: 36
-        radius: Theme.radiusMedium
+        Layout.preferredWidth: 34
+        Layout.preferredHeight: 34
+        radius: height / 2
         color: powerMouse.containsMouse ? Theme.red : Theme.cardBackground
         border.color: powerMouse.containsMouse ? Theme.red : Theme.borderSubtle
         border.width: 1
@@ -207,8 +209,36 @@ RowLayout {
             onClicked: {
                 var home = Quickshell.env("HOME")
                 Quickshell.execDetached(["sh", "-c", "sleep 0.08 && quickshell -p \"" + home + "/.config/quickshell/powermenu/shell.qml\""])
-                Qt.quit()
+                root.collapseRequested()
             }
+        }
+    }
+
+    // Botão Recolher Ilha
+    Rectangle {
+        Layout.preferredWidth: 34
+        Layout.preferredHeight: 34
+        radius: height / 2
+        color: collapseMouse.containsMouse ? Theme.surfaceActive : Theme.cardBackground
+        border.color: collapseMouse.containsMouse ? Theme.primary : Theme.borderSubtle
+        border.width: 1
+
+        Behavior on color { ColorAnimation { duration: 150 } }
+
+        Text {
+            anchors.centerIn: parent
+            text: "󰅃"
+            font.family: Theme.fontFamily
+            font.pixelSize: 16
+            color: collapseMouse.containsMouse ? Theme.primary : Theme.textMuted
+        }
+
+        MouseArea {
+            id: collapseMouse
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            onClicked: root.collapseRequested()
         }
     }
 }

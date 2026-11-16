@@ -21,14 +21,14 @@ Scope {
     }
 
     readonly property string netTitle: {
-        if (netType === "ethernet") return "Rede Cabeada"
+        if (netType === "ethernet") return "Ethernet"
         if (netType === "wifi") return "Wi-Fi"
-        return "Desconectado"
+        return "Disconnected"
     }
 
     readonly property string netSubtitle: {
-        if (netType === "none") return "Sem conexão"
-        var detail = netIp !== "" ? netIp : (netInterface || "Conectado")
+        if (netType === "none") return "No connection"
+        var detail = netIp !== "" ? netIp : (netInterface || "Connected")
         return detail + (tailscaleActive ? " • VPN" : "")
     }
 
@@ -69,10 +69,10 @@ Scope {
     readonly property int sunsetTemp: sunsetPresets[sunsetPresetIndex]
 
     readonly property string sunsetIcon: sunsetActive ? "󰖔" : "󰖙"
-    readonly property string sunsetTitle: "Luz Noturna"
+    readonly property string sunsetTitle: "Night Light"
     readonly property string sunsetSubtitle: sunsetActive
-        ? ("Ativo • " + sunsetTemp + "K")
-        : ("Desligado • " + sunsetTemp + "K")
+        ? ("On • " + sunsetTemp + "K")
+        : ("Off • " + sunsetTemp + "K")
 
     Process {
         id: sunsetCheckProc
