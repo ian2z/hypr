@@ -11,7 +11,7 @@ GridLayout {
     columnSpacing: 8
     Layout.fillWidth: true
 
-    // 1. Conexão de Rede (Wi-Fi ou Cabeada / Ethernet)
+    // 1. Conexão de Rede (Detecta Wi-Fi com SSID ou Cabeada Ethernet)
     QuickTile {
         icon: SystemService.netIcon
         title: SystemService.netTitle
@@ -19,11 +19,17 @@ GridLayout {
         active: SystemService.netType !== "none"
         hasSecondaryAction: true
         secondaryIcon: "󰅂"
-        onClicked: SystemService.toggleWifi()
+        onClicked: {
+            if (SystemService.netType === "wifi" || SystemService.wifiEnabled) {
+                SystemService.toggleWifi()
+            } else {
+                SystemService.openNetworkManager()
+            }
+        }
         onSecondaryClicked: SystemService.openNetworkManager()
     }
 
-    // 2. Bluetooth (Mostra dispositivo conectado, ex: TWS-6, e bateria)
+    // 2. Bluetooth (Mostra dispositivo conectado e bateria, ex: TWS-6)
     QuickTile {
         icon: SystemService.btEnabled
             ? (SystemService.primaryBtDevice ? "󰂱" : "")
@@ -37,21 +43,17 @@ GridLayout {
         onSecondaryClicked: SystemService.openBluetoothManager()
     }
 
-    // 3. Checagem de Atualizações (checkupdates / yay)
+    // 3. Filtro Noturno (Hyprsunset)
     QuickTile {
-        icon: SystemService.checkingUpdates ? "󰑐" : "󰚰"
-        title: "Atualizações"
-        subtitle: {
-            if (SystemService.checkingUpdates) return "Verificando..."
-            if (SystemService.pendingUpdates > 0) return SystemService.pendingUpdates + " pacotes"
-            return "Atualizado"
-        }
-        active: SystemService.pendingUpdates > 0
-        activeColor: SystemService.pendingUpdates > 0 ? Theme.primary : Theme.green
+        icon: SystemService.sunsetIcon
+        title: SystemService.sunsetTitle
+        subtitle: SystemService.sunsetSubtitle
+        active: SystemService.sunsetActive
+        activeColor: Theme.orange
         hasSecondaryAction: true
-        secondaryIcon: "󰑐"
-        onClicked: SystemService.runSystemUpdate()
-        onSecondaryClicked: SystemService.refreshUpdates()
+        secondaryIcon: "󰔎"
+        onClicked: SystemService.toggleSunset()
+        onSecondaryClicked: SystemService.cycleSunsetTemp()
     }
 
     // 4. Modo Não Perturbe (Dunst Notifications)

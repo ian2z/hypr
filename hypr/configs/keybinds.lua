@@ -9,9 +9,8 @@ local browser     = "zen-browser"
 
 local home        = os.getenv("HOME")
 local menu        = home .. "/.config/rofi/launchers/type-1/launcher.sh"
-local volumemenu  = home .. "/.config/rofi/applets/bin/volume.sh"
-local powermenu   = home .. "/.config/rofi/powermenu/type-1/powermenu.sh"
-local waybar_ref  = home .. "/.config/waybar/scripts/refresh.sh"
+local powermenu   = home .. "/.config/quickshell/powermenu/toggle.sh"
+local island_toggle = "qs ipc call island toggle"
 
 --------------------------------------------------------------------------------
 -- Aplicativos e Sistema
@@ -25,8 +24,7 @@ hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen({ mode = "maximized", action
 hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch exit"))
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd(browser))
 hl.bind(mainMod .. " + P", hl.dsp.exec_cmd(powermenu))
-hl.bind(mainMod .. " + O", hl.dsp.exec_cmd(volumemenu))
-hl.bind(mainMod .. " + W", hl.dsp.exec_cmd(waybar_ref))
+hl.bind(mainMod .. " + O", hl.dsp.exec_cmd(island_toggle))
 hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("loginctl lock-session"))
 
 --------------------------------------------------------------------------------

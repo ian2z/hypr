@@ -20,13 +20,13 @@ ColumnLayout {
         id: sliderTrack
         Layout.fillWidth: true
         height: 6
-        radius: 3
+        radius: height / 2
         color: Theme.surface
 
         Rectangle {
             id: sliderProgress
             height: parent.height
-            radius: parent.radius
+            radius: height / 2
             color: Theme.primary
             width: {
                 if (!root.player || !root.player.length || root.player.length <= 0) return 0
@@ -54,8 +54,9 @@ ColumnLayout {
 
         Text {
             text: root.player ? root.formatTime(root.player.position) : "00:00"
-            font.pixelSize: 11
-            color: Theme.textMuted
+            font.family: Theme.fontFamily
+            font.pixelSize: 10
+            color: Theme.textSubtle
         }
 
         Item {
@@ -64,8 +65,9 @@ ColumnLayout {
 
         Text {
             text: root.player ? root.formatTime(root.player.length) : "00:00"
-            font.pixelSize: 11
-            color: Theme.textMuted
+            font.family: Theme.fontFamily
+            font.pixelSize: 10
+            color: Theme.textSubtle
         }
     }
 }

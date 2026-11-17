@@ -10,7 +10,7 @@ Rectangle {
 
     Layout.fillWidth: true
     implicitHeight: mainCol.implicitHeight + 24
-    radius: Theme.radiusMedium
+    radius: Theme.radiusLarge
     color: Theme.cardBackground
     border.color: Theme.borderSubtle
     border.width: 1
@@ -34,10 +34,12 @@ Rectangle {
             Rectangle {
                 Layout.preferredWidth: 36
                 Layout.preferredHeight: 36
-                radius: 10
+                radius: 12
                 color: AudioService.muted
                     ? Theme.surface
-                    : (muteMouse.containsMouse ? Theme.surfaceActive : Theme.primary)
+                    : (muteMouse.containsMouse ? Theme.accent : Theme.primary)
+                border.width: AudioService.muted ? 1 : 0
+                border.color: Theme.borderSubtle
 
                 Behavior on color { ColorAnimation { duration: 150 } }
 
@@ -58,7 +60,7 @@ Rectangle {
                 }
             }
 
-            // Nome do dispositivo atual (Ex: TWS-6 ou Alto-falantes) + Categoria
+            // Nome do dispositivo atual + Categoria
             ColumnLayout {
                 Layout.fillWidth: true
                 spacing: 1
@@ -75,7 +77,7 @@ Rectangle {
 
                 Text {
                     text: AudioService.muted
-                        ? "Silenciado (" + AudioService.activeDeviceCategory + ")"
+                        ? "Muted (" + AudioService.activeDeviceCategory + ")"
                         : AudioService.activeDeviceCategory
                     font.family: Theme.fontFamily
                     font.pixelSize: 10
@@ -94,11 +96,37 @@ Rectangle {
                 color: AudioService.muted ? Theme.textSubtle : Theme.textMuted
             }
 
-            // Botão Expandir Lista de Dispositivos (Alto-falantes / Fone)
+            // Botão Mute Rápido do Microfone
             Rectangle {
                 Layout.preferredWidth: 28
                 Layout.preferredHeight: 28
-                radius: 8
+                radius: height / 2
+                color: micMouse.containsMouse ? Theme.surface : "transparent"
+                border.width: AudioService.micMuted ? 1 : 0
+                border.color: Theme.red
+
+                Text {
+                    anchors.centerIn: parent
+                    text: AudioService.micMuted ? "" : ""
+                    font.family: Theme.fontFamily
+                    font.pixelSize: 13
+                    color: AudioService.micMuted ? Theme.red : Theme.textMuted
+                }
+
+                MouseArea {
+                    id: micMouse
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: AudioService.toggleMicMute()
+                }
+            }
+
+            // Botão Expandir Lista de Dispositivos
+            Rectangle {
+                Layout.preferredWidth: 28
+                Layout.preferredHeight: 28
+                radius: height / 2
                 color: expandMouse.containsMouse || root.expanded ? Theme.surface : "transparent"
 
                 Text {
@@ -122,7 +150,7 @@ Rectangle {
             Rectangle {
                 Layout.preferredWidth: 28
                 Layout.preferredHeight: 28
-                radius: 8
+                radius: height / 2
                 color: mixerMouse.containsMouse ? Theme.surface : "transparent"
 
                 Text {
@@ -147,20 +175,20 @@ Rectangle {
         Item {
             id: volumeSliderContainer
             Layout.fillWidth: true
-            height: 18
+            height: 16
 
             Rectangle {
                 id: volumeTrack
                 anchors.verticalCenter: parent.verticalCenter
                 width: parent.width
                 height: 8
-                radius: 4
+                radius: height / 2
                 color: Theme.surface
 
                 Rectangle {
                     id: volumeFill
                     height: parent.height
-                    radius: parent.radius
+                    radius: height / 2
                     color: AudioService.muted ? Theme.textSubtle : Theme.primary
                     width: {
                         var clamped = Math.min(Math.max(AudioService.volume, 0.0), 1.0)
@@ -192,7 +220,7 @@ Rectangle {
             }
         }
 
-        // Lista Expansível de Dispositivos de Saída (Fone vs Alto-falantes)
+        // Lista Expansível de Dispositivos de Saída
         ColumnLayout {
             visible: root.expanded
             Layout.fillWidth: true
@@ -205,7 +233,7 @@ Rectangle {
             }
 
             Text {
-                text: "Dispositivos de Saída"
+                text: "OUTPUT DEVICES"
                 font.family: Theme.fontFamily
                 font.pixelSize: 10
                 font.bold: true
@@ -225,7 +253,7 @@ Rectangle {
 
                     Layout.fillWidth: true
                     implicitHeight: 36
-                    radius: 8
+                    radius: 10
                     color: sinkMouse.containsMouse
                         ? Theme.surfaceActive
                         : (isSelected ? Theme.surface : "transparent")
