@@ -41,3 +41,21 @@ hl.config({
         },
     },
 })
+
+-- =============================================================================
+-- Regras de Janelas (Window Rules)
+-- =============================================================================
+
+-- Suprime solicitações de maximização automática de apps (ex: Kitty/Wayland abrindo em tela cheia)
+hl.window_rule({
+    name  = "suppress-maximize-events",
+    match = { class = ".*" },
+    suppress_event = "maximize",
+})
+
+-- Janelas flutuantes utilitárias
+hl.window_rule({
+    name  = "pavucontrol-float",
+    match = { class = "org.pulseaudio.pavucontrol" },
+    float = true,
+})
