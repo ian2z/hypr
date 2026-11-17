@@ -40,6 +40,10 @@ hl.config({
             disable_while_typing = true,     -- Evita cliques acidentais enquanto você digita
         },
     },
+
+    xwayland = {
+        force_zero_scaling = true,
+    },
 })
 
 -- =============================================================================
