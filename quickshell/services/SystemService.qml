@@ -11,9 +11,9 @@ Scope {
     // =========================================================================
     // 1. REDE: WI-FI & CABEADA / ETHERNET (Detecção Dinâmica)
     // =========================================================================
-    readonly property bool wifiEnabled: Networking.wifiEnabled
+    property bool wifiEnabled: true
     property string netType: "none"       // "wifi", "ethernet", "none"
-    property string netName: "Desconectado"
+    property string netName: "Disconnected"
     property string netInterface: ""
     property string netIp: ""
     property int wifiSignal: 0
@@ -31,81 +31,40 @@ Scope {
     }
 
     readonly property string netTitle: {
-        if (netType === "ethernet") return "Rede Cabeada"
+        if (netType === "ethernet") return "Wired Connection"
         if (netType === "wifi") return netName !== "" ? netName : "Wi-Fi"
-        return "Rede"
+        return "Network"
     }
 
     readonly property string netSubtitle: {
         if (netType === "ethernet") return (netInterface || "Ethernet") + (netIp ? " • " + netIp : "") + (tailscaleActive ? " • VPN" : "")
         if (netType === "wifi") return "Wi-Fi (" + wifiSignal + "%)" + (tailscaleActive ? " • VPN" : "")
-        return wifiEnabled ? "Desconectado" : "Wi-Fi Desligado"
+        return wifiEnabled ? "Disconnected" : "Wi-Fi Off"
     }
 
     Process {
         id: netCheckProc
-        command: ["sh", "-c", "nmcli -t -f TYPE,STATE,CONNECTION,DEVICE device 2>/dev/null; echo '---WIFI---'; nmcli -t -f ACTIVE,SSID,SIGNAL dev wifi 2>/dev/null | grep '^yes:' || true; echo '---IP---'; ip -4 -o addr show up scope global 2>/dev/null | awk '$2 !~ /^(docker|br-|veth|lo|tailscale)/ {split($4,a,\"/\"); print $2\":\"a[1]; exit}']"]
+        command: ["python3", Quickshell.shellDir + "/services/network_info.py"]
         stdout: SplitParser {
-            splitMarker: ""
             onRead: (data) => {
-                var text = data.trim()
-                if (!text) return
-                var p1 = text.split("---WIFI---")
-                var devLines = (p1[0] || "").trim().split("\n")
-                var rest = p1[1] || ""
-                var p2 = rest.split("---IP---")
-                var wifiLine = (p2[0] || "").trim()
-                var ipLine = (p2[1] || "").trim()
-
-                var foundType = "none"
-                var foundName = "Desconectado"
-                var foundIface = ""
-                var hasTailscale = false
-
-                for (var i = 0; i < devLines.length; i++) {
-                    var cols = devLines[i].split(":")
-                    if (cols.length >= 4) {
-                        var t = cols[0]
-                        var st = cols[1]
-                        var conn = cols[2]
-                        var dev = cols[3]
-                        if (t === "tun" && dev === "tailscale0" && st.indexOf("connected") !== -1) {
-                            hasTailscale = true
-                        } else if (t === "ethernet" && st === "connected") {
-                            foundType = "ethernet"
-                            foundName = conn || "Ethernet"
-                            foundIface = dev
-                        } else if (t === "wifi" && st === "connected" && foundType !== "ethernet") {
-                            foundType = "wifi"
-                            foundName = conn || "Wi-Fi"
-                            foundIface = dev
-                        }
-                    }
+                var line = data.trim()
+                if (line.indexOf("NET|") === 0) {
+                    var p = line.split("|")
+                    // NET|type|name|interface|ip|signal|tailscale|wifi_enabled
+                    root.netType = p[1] || "none"
+                    root.netName = p[2] || "Disconnected"
+                    root.netInterface = p[3] || ""
+                    root.netIp = p[4] || ""
+                    root.wifiSignal = parseInt(p[5], 10) || 0
+                    root.tailscaleActive = (p[6] === "1")
+                    root.wifiEnabled = (p[7] === "1")
                 }
-
-                if (wifiLine.indexOf("yes:") === 0) {
-                    var wcols = wifiLine.split(":")
-                    if (wcols.length >= 3) {
-                        var sig = parseInt(wcols[wcols.length - 1], 10)
-                        if (!isNaN(sig)) root.wifiSignal = sig
-                    }
-                }
-
-                if (ipLine) {
-                    var ipParts = ipLine.split(":")
-                    if (ipParts.length >= 2) root.netIp = ipParts[1]
-                }
-
-                root.netType = foundType
-                root.netName = foundName
-                root.netInterface = foundIface
-                root.tailscaleActive = hasTailscale
             }
         }
     }
 
     function toggleWifi() {
-        Networking.wifiEnabled = !Networking.wifiEnabled
+        Quickshell.execDetached(["sh", "-c", "if nmcli radio wifi | grep -qi enabled; then nmcli radio wifi off; else nmcli radio wifi on; fi"])
         netRefreshDelay.restart()
     }
 
@@ -119,9 +78,9 @@ Scope {
 
     Timer {
         id: netRefreshDelay
-        interval: 1200
+        interval: 1000
         repeat: false
-        onTriggered: netCheckProc.running = true
+        onTriggered: if (!netCheckProc.running) netCheckProc.running = true
     }
 
     // =========================================================================
@@ -145,21 +104,21 @@ Scope {
     readonly property var primaryBtDevice: connectedBtDevices.length > 0 ? connectedBtDevices[0] : null
     readonly property string btStatusTitle: {
         if (!btEnabled) return "Bluetooth"
-        if (primaryBtDevice) return primaryBtDevice.name || primaryBtDevice.deviceName || "Conectado"
+        if (primaryBtDevice) return primaryBtDevice.name || primaryBtDevice.deviceName || "Connected"
         return "Bluetooth"
     }
     readonly property string btStatusSubtitle: {
-        if (!btEnabled) return "Desligado"
+        if (!btEnabled) return "Disabled"
         if (primaryBtDevice) {
             if (primaryBtDevice.batteryAvailable && primaryBtDevice.battery > 0) {
                 var pct = primaryBtDevice.battery <= 1.0
                     ? Math.round(primaryBtDevice.battery * 100)
                     : Math.round(primaryBtDevice.battery)
-                return "Conectado • " + pct + "%"
+                return "Connected • " + pct + "%"
             }
-            return "Conectado"
+            return "Connected"
         }
-        return "Ligado • Pareado"
+        return "On • Paired"
     }
 
     function toggleBluetooth() {
@@ -175,44 +134,51 @@ Scope {
     }
 
     // =========================================================================
-    // 3. FILTRO NOTURNO (Hyprsunset)
+    // 3. FILTRO NOTURNO (Hyprsunset Seguro)
     // =========================================================================
     property bool sunsetActive: false
     property int sunsetPresetIndex: 0
     readonly property var sunsetPresets: [
-        { temp: 4500, label: "4500K (Suave)" },
-        { temp: 3500, label: "3500K (Médio)" },
-        { temp: 2500, label: "2500K (Forte)" }
+        { temp: 4500, label: "4500K (Soft)" },
+        { temp: 3500, label: "3500K (Medium)" },
+        { temp: 2500, label: "2500K (Warm)" }
     ]
     readonly property int sunsetTemp: sunsetPresets[sunsetPresetIndex].temp
     readonly property string sunsetTempLabel: sunsetPresets[sunsetPresetIndex].label
     readonly property string sunsetIcon: sunsetActive ? "󰖔" : "󰖙"
-    readonly property string sunsetTitle: "Luz Noturna"
-    readonly property string sunsetSubtitle: sunsetActive ? sunsetTempLabel : "Desligada"
+    readonly property string sunsetTitle: "Night Light"
+    readonly property string sunsetSubtitle: sunsetActive ? sunsetTempLabel : "Off"
 
     Process {
         id: sunsetCheckProc
-        command: ["pgrep", "-x", "hyprsunset"]
-        onExited: (code, status) => {
-            root.sunsetActive = (code === 0)
+        command: [Quickshell.shellDir + "/services/sunset_control.sh", "status"]
+        stdout: SplitParser {
+            onRead: (data) => {
+                root.sunsetActive = (data.trim() === "1")
+            }
         }
     }
 
     function toggleSunset() {
-        if (root.sunsetActive) {
-            Quickshell.execDetached(["pkill", "-x", "hyprsunset"])
-            root.sunsetActive = false
-        } else {
-            Quickshell.execDetached(["hyprsunset", "-t", String(root.sunsetTemp)])
-            root.sunsetActive = true
-        }
+        var script = Quickshell.shellDir + "/services/sunset_control.sh"
+        Quickshell.execDetached([script, "toggle", String(root.sunsetTemp)])
+        sunsetRefreshDelay.restart()
     }
 
     function cycleSunsetTemp() {
         root.sunsetPresetIndex = (root.sunsetPresetIndex + 1) % root.sunsetPresets.length
         if (root.sunsetActive) {
-            Quickshell.execDetached(["sh", "-c", "pkill -x hyprsunset 2>/dev/null; hyprsunset -t " + root.sunsetTemp])
+            var script = Quickshell.shellDir + "/services/sunset_control.sh"
+            Quickshell.execDetached([script, "set", String(root.sunsetTemp)])
+            sunsetRefreshDelay.restart()
         }
+    }
+
+    Timer {
+        id: sunsetRefreshDelay
+        interval: 350
+        repeat: false
+        onTriggered: if (!sunsetCheckProc.running) sunsetCheckProc.running = true
     }
 
     // =========================================================================
@@ -403,10 +369,63 @@ Scope {
     }
 
     // =========================================================================
+    // 8. BRILHO DA TELA (brightnessctl)
+    // =========================================================================
+    property int brightnessPercent: 100
+    signal brightnessChanged()
+
+    readonly property string brightnessIcon: {
+        if (brightnessPercent >= 75) return "󰃠"
+        if (brightnessPercent >= 45) return "󰃟"
+        if (brightnessPercent >= 15) return "󰃞"
+        return "󰃝"
+    }
+
+    Process {
+        id: brightnessCheckProc
+        command: ["brightnessctl", "-m"]
+        stdout: SplitParser {
+            onRead: (data) => {
+                var line = data.trim()
+                if (line) {
+                    var parts = line.split(",")
+                    if (parts.length >= 4) {
+                        var pctStr = parts[3].replace("%", "").trim()
+                        var pct = parseInt(pctStr, 10)
+                        if (!isNaN(pct)) {
+                            if (root.brightnessPercent !== pct) {
+                                root.brightnessPercent = pct
+                                root.brightnessChanged()
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    function setBrightness(pct) {
+        var clamped = Math.max(5, Math.min(100, Math.round(pct)))
+        if (root.brightnessPercent !== clamped) {
+            root.brightnessPercent = clamped
+            root.brightnessChanged()
+        }
+        Quickshell.execDetached(["brightnessctl", "set", clamped + "%"])
+    }
+
+    function stepBrightness(delta) {
+        setBrightness(root.brightnessPercent + delta)
+    }
+
+    function refreshBrightness() {
+        if (!brightnessCheckProc.running) brightnessCheckProc.running = true
+    }
+
+    // =========================================================================
     // TIMERS DE SINCRONIZAÇÃO
     // =========================================================================
     Timer {
-        interval: 3000
+        interval: 2000
         running: true
         repeat: true
         triggeredOnStart: true
@@ -417,6 +436,7 @@ Scope {
             if (!batteryProc.running) batteryProc.running = true
             if (!hwCheckProc.running) hwCheckProc.running = true
             if (!uptimeProc.running) uptimeProc.running = true
+            if (!brightnessCheckProc.running) brightnessCheckProc.running = true
         }
     }
 

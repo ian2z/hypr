@@ -234,10 +234,18 @@ Rectangle {
         }
     }
 
+    Connections {
+        target: SystemService
+        function onBrightnessChanged() {
+            islandRoot.triggerHud("brightness")
+        }
+    }
+
     // -------------------------------------------------------------------------
-    // Relógio Digital da Ilha
+    // Relógio Digital & Data da Ilha
     // -------------------------------------------------------------------------
     property string currentTime: "00:00"
+    property string currentDateShort: ""
 
     Timer {
         interval: 1000
@@ -249,6 +257,10 @@ Rectangle {
             var h = String(d.getHours()).padStart(2, '0')
             var m = String(d.getMinutes()).padStart(2, '0')
             islandRoot.currentTime = h + ":" + m
+
+            var days = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"]
+            var months = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
+            islandRoot.currentDateShort = days[d.getDay()] + ", " + d.getDate() + " " + months[d.getMonth()]
         }
     }
 
@@ -399,6 +411,9 @@ Rectangle {
 
         Text {
             text: {
+                if (islandRoot.hudType === "brightness") {
+                    return SystemService.brightnessIcon
+                }
                 if (islandRoot.hudType === "mic") {
                     return AudioService.micMuted ? "" : ""
                 }
@@ -409,7 +424,11 @@ Rectangle {
             }
             font.family: Theme.fontFamily
             font.pixelSize: 15
-            color: (AudioService.muted || (islandRoot.hudType === "mic" && AudioService.micMuted)) ? Theme.red : Theme.primary
+            color: {
+                if (islandRoot.hudType === "brightness") return Theme.primary
+                if (AudioService.muted || (islandRoot.hudType === "mic" && AudioService.micMuted)) return Theme.red
+                return Theme.primary
+            }
         }
 
         Rectangle {
@@ -421,8 +440,14 @@ Rectangle {
             Rectangle {
                 height: parent.height
                 radius: parent.radius
-                color: AudioService.muted ? Theme.red : Theme.primary
-                width: Math.min(parent.width, Math.max(0, parent.width * (AudioService.volumePercent / 100.0)))
+                color: (islandRoot.hudType !== "brightness" && AudioService.muted) ? Theme.red : Theme.primary
+                width: {
+                    if (islandRoot.hudType === "brightness") {
+                        var bClamped = Math.min(Math.max(SystemService.brightnessPercent / 100.0, 0.05), 1.0)
+                        return Math.min(parent.width, Math.max(0, parent.width * bClamped))
+                    }
+                    return Math.min(parent.width, Math.max(0, parent.width * (AudioService.volumePercent / 100.0)))
+                }
                 Behavior on width {
                     NumberAnimation { duration: 100; easing.type: Easing.OutQuad }
                 }
@@ -431,6 +456,9 @@ Rectangle {
 
         Text {
             text: {
+                if (islandRoot.hudType === "brightness") {
+                    return SystemService.brightnessPercent + "%"
+                }
                 if (islandRoot.hudType === "mic") {
                     return AudioService.micMuted ? "Muted" : AudioService.micVolumePercent + "%"
                 }
@@ -648,13 +676,19 @@ Rectangle {
         // 2. Acessos Rápidos (Rede Wi-Fi/Cabeada, Bluetooth, Hyprsunset, Não Perturbe)
         QuickSettingsGrid {}
 
-        // 3. Status das Baterias do Laptop (Porcentagem + Tempo Restante BAT0/BAT1)
-        BatteryCard {}
+        // 3. Calendário Completo e Data de Acesso Rápido
+        CalendarCard {}
 
         // 4. Controle de Volume Inteligente
         AudioPanel {}
 
-        // 5. Player de Mídia
+        // 5. Controle de Brilho da Tela
+        BrightnessCard {}
+
+        // 6. Status das Baterias do Laptop (Porcentagem + Tempo Restante BAT0/BAT1)
+        BatteryCard {}
+
+        // 7. Player de Mídia
         MediaCard {}
     }
 }
