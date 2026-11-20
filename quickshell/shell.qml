@@ -19,7 +19,7 @@ Scope {
             left: true
             right: true
         }
-        implicitHeight: 32
+        implicitHeight: 41
         color: "transparent"
         exclusionMode: ExclusionMode.Auto
         mask: Region {} // 100% click-through
@@ -90,7 +90,7 @@ Scope {
             id: island
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
-            anchors.topMargin: 3
+            anchors.topMargin: 6
         }
 
         // Cápsula do System Tray acoplada ao lado direito da Island
