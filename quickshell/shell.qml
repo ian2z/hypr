@@ -12,7 +12,6 @@ Scope {
     id: root
 
     // 1. Reserva de Espaço Exclusivo no Topo
-    // Comunica ao Hyprland/Wayland para manter o gap superior para as janelas (evitando que fiquem sob a Island)
     PanelWindow {
         id: topReserveGap
         anchors {
@@ -20,7 +19,7 @@ Scope {
             left: true
             right: true
         }
-        implicitHeight: 48
+        implicitHeight: 32
         color: "transparent"
         exclusionMode: ExclusionMode.Auto
         mask: Region {} // 100% click-through
@@ -91,7 +90,7 @@ Scope {
             id: island
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
-            anchors.topMargin: 6
+            anchors.topMargin: 3
         }
 
         // Cápsula do System Tray acoplada ao lado direito da Island
