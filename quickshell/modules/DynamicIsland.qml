@@ -112,14 +112,14 @@ Rectangle {
     }
 
     // Cores e Borda
-    color: "#f20d0e15"
+    color: Theme.backgroundTransparent
     border.color: {
-        if (isExpanded) return "#45475a"
+        if (isExpanded) return Theme.primary
         if (showingNotification) {
             return NotificationService.urgency === 2 ? Theme.red : Theme.primary
         }
         if (islandMouse.containsMouse) return Theme.accent
-        return "#36384d"
+        return Theme.border
     }
     border.width: 1
     clip: true
@@ -235,9 +235,10 @@ Rectangle {
     }
 
     // -------------------------------------------------------------------------
-    // Relógio Digital da Ilha
+    // Relógio Digital & Data da Ilha
     // -------------------------------------------------------------------------
     property string currentTime: "00:00"
+    property string currentDateShort: ""
 
     Timer {
         interval: 1000
@@ -249,6 +250,10 @@ Rectangle {
             var h = String(d.getHours()).padStart(2, '0')
             var m = String(d.getMinutes()).padStart(2, '0')
             islandRoot.currentTime = h + ":" + m
+
+            var days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+            var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+            islandRoot.currentDateShort = days[d.getDay()] + ", " + d.getDate() + " " + months[d.getMonth()]
         }
     }
 
@@ -648,10 +653,13 @@ Rectangle {
         // 2. Acessos Rápidos (Rede Cabeada, Hyprsunset, Updates, Não Perturbe)
         QuickSettingsGrid {}
 
-        // 3. Controle de Volume Inteligente (Monitor / Fone + Microfone + Seletor de Saída)
+        // 3. Calendário Completo e Data de Acesso Rápido
+        CalendarCard {}
+
+        // 4. Controle de Volume Inteligente (Monitor / Fone + Microfone + Seletor de Saída)
         AudioPanel {}
 
-        // 4. Player do Spotify / Mídia Completo com Capa, Timeline e Controles
+        // 5. Player do Spotify / Mídia Completo com Capa, Timeline e Controles
         MediaCard {}
     }
 }

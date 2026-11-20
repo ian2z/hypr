@@ -44,6 +44,10 @@ hl.config({
     cursor = {
         no_hardware_cursors = true,
     },
+
+    xwayland = {
+        force_zero_scaling = true,
+    },
 })
 
 -- Ignora solicitações de maximização automáticas das aplicações (evita abrir em fullscreen/maximized)

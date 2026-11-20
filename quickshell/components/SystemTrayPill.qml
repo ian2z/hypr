@@ -10,8 +10,8 @@ Rectangle {
     implicitHeight: 36
     implicitWidth: trayRow.implicitWidth + 20
     radius: height / 2
-    color: "#f20d0e15"
-    border.color: "#36384d"
+    color: Theme.backgroundTransparent
+    border.color: Theme.border
     border.width: 1
     clip: true
 

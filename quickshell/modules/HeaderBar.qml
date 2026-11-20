@@ -208,7 +208,7 @@ RowLayout {
             cursorShape: Qt.PointingHandCursor
             onClicked: {
                 var home = Quickshell.env("HOME")
-                Quickshell.execDetached(["sh", "-c", "sleep 0.08 && quickshell -p \"" + home + "/.config/quickshell/powermenu/shell.qml\""])
+                Quickshell.execDetached([home + "/.config/quickshell/powermenu/toggle.sh"])
                 root.collapseRequested()
             }
         }

@@ -7,97 +7,126 @@ Scope {
     id: root
 
     // =========================================================================
-    // 1. REDE CABEADA / ETHERNET (iproute2 + nmcli)
+    // 1. REDE: WI-FI & CABEADA / ETHERNET (Detecção Dinâmica)
     // =========================================================================
+    property bool wifiEnabled: true
     property string netType: "ethernet"   // "ethernet", "wifi", "none"
+    property string netName: "Connected"
     property string netInterface: "enp6s0"
     property string netIp: ""
+    property int wifiSignal: 0
     property bool tailscaleActive: false
 
     readonly property string netIcon: {
         if (netType === "ethernet") return "󰈀"
-        if (netType === "wifi") return "󰤨"
-        return "󰈂"
+        if (netType === "wifi") {
+            if (wifiSignal >= 75) return "󰤨"
+            if (wifiSignal >= 50) return "󰤥"
+            if (wifiSignal >= 25) return "󰤢"
+            return "󰤟"
+        }
+        return wifiEnabled ? "󰤯" : "󰤭"
     }
 
     readonly property string netTitle: {
-        if (netType === "ethernet") return "Ethernet"
-        if (netType === "wifi") return "Wi-Fi"
-        return "Disconnected"
+        if (netType === "ethernet") return "Wired Connection"
+        if (netType === "wifi") return netName !== "" ? netName : "Wi-Fi"
+        return "Network"
     }
 
     readonly property string netSubtitle: {
-        if (netType === "none") return "No connection"
-        var detail = netIp !== "" ? netIp : (netInterface || "Connected")
-        return detail + (tailscaleActive ? " • VPN" : "")
+        if (netType === "ethernet") return (netInterface || "Ethernet") + (netIp ? " • " + netIp : "") + (tailscaleActive ? " • VPN" : "")
+        if (netType === "wifi") return "Wi-Fi (" + wifiSignal + "%)" + (tailscaleActive ? " • VPN" : "")
+        return wifiEnabled ? "Disconnected" : "Wi-Fi Off"
     }
 
     Process {
         id: netCheckProc
-        command: ["sh", "-c", "IFACE_IP=$(ip -4 -o addr show up scope global 2>/dev/null | awk '$2 !~ /^(docker|br-|veth|lo|tailscale)/ {split($4,a,\"/\"); print $2\":\"a[1]; exit}'); IFACE=${IFACE_IP%%:*}; IP=${IFACE_IP#*:}; VPN=$(ip link show tailscale0 up 2>/dev/null | grep -q 'UP' && echo '1' || echo '0'); if [ -n \"$IFACE\" ]; then echo \"NET|ethernet|$IFACE|$IP|$VPN\"; else echo \"NET|none|||0\"; fi"]
+        command: ["python3", Quickshell.shellDir + "/services/network_info.py"]
         stdout: SplitParser {
             onRead: (data) => {
                 var line = data.trim()
-                if (line.indexOf("NET|") !== 0) return
-                var parts = line.split("|")
-                if (parts.length >= 5) {
-                    root.netType = parts[1] || "none"
-                    root.netInterface = parts[2] || ""
-                    root.netIp = parts[3] || ""
-                    root.tailscaleActive = (parts[4] === "1")
+                if (line.indexOf("NET|") === 0) {
+                    var p = line.split("|")
+                    root.netType = p[1] || "none"
+                    root.netName = p[2] || "Disconnected"
+                    root.netInterface = p[3] || ""
+                    root.netIp = p[4] || ""
+                    root.wifiSignal = parseInt(p[5], 10) || 0
+                    root.tailscaleActive = (p[6] === "1")
+                    root.wifiEnabled = (p[7] === "1")
                 }
             }
         }
     }
 
+    function toggleWifi() {
+        Quickshell.execDetached(["sh", "-c", "if nmcli radio wifi | grep -qi enabled; then nmcli radio wifi off; else nmcli radio wifi on; fi"])
+        netRefreshDelay.restart()
+    }
+
     function refreshNetwork() {
-        if (!netCheckProc.running) {
-            netCheckProc.running = true
-        }
+        if (!netCheckProc.running) netCheckProc.running = true
     }
 
     function openNetworkManager() {
-        Quickshell.execDetached(["kitty", "-e", "nmtui"])
+        Quickshell.execDetached(["sh", "-c", "command -v networkmanager_dmenu >/dev/null 2>&1 && networkmanager_dmenu || kitty -e nmtui"])
+    }
+
+    Timer {
+        id: netRefreshDelay
+        interval: 400
+        repeat: false
+        onTriggered: root.refreshNetwork()
     }
 
     // =========================================================================
-    // 2. FILTRO NOTURNO / LUZ AZUL (hyprsunset)
+    // 2. FILTRO NOTURNO / LUZ AZUL (Hyprsunset Seguro)
     // =========================================================================
     property bool sunsetActive: false
-    readonly property var sunsetPresets: [4500, 3800, 3200]
     property int sunsetPresetIndex: 0
-    readonly property int sunsetTemp: sunsetPresets[sunsetPresetIndex]
-
+    readonly property var sunsetPresets: [
+        { temp: 4500, label: "4500K (Soft)" },
+        { temp: 3500, label: "3500K (Medium)" },
+        { temp: 2500, label: "2500K (Warm)" }
+    ]
+    readonly property int sunsetTemp: sunsetPresets[sunsetPresetIndex].temp
+    readonly property string sunsetTempLabel: sunsetPresets[sunsetPresetIndex].label
     readonly property string sunsetIcon: sunsetActive ? "󰖔" : "󰖙"
     readonly property string sunsetTitle: "Night Light"
-    readonly property string sunsetSubtitle: sunsetActive
-        ? ("On • " + sunsetTemp + "K")
-        : ("Off • " + sunsetTemp + "K")
+    readonly property string sunsetSubtitle: sunsetActive ? sunsetTempLabel : "Off"
 
     Process {
         id: sunsetCheckProc
-        command: ["sh", "-c", "pgrep -x hyprsunset >/dev/null 2>&1 && echo 'active' || echo 'inactive'"]
+        command: [Quickshell.shellDir + "/services/sunset_control.sh", "status"]
         stdout: SplitParser {
             onRead: (data) => {
-                root.sunsetActive = (data.trim() === "active")
+                root.sunsetActive = (data.trim() === "1")
             }
         }
     }
 
     function toggleSunset() {
-        if (root.sunsetActive) {
-            Quickshell.execDetached(["pkill", "-x", "hyprsunset"])
-            root.sunsetActive = false
-        } else {
-            Quickshell.execDetached(["sh", "-c", "pkill -x hyprsunset 2>/dev/null; hyprsunset -t " + root.sunsetTemp])
-            root.sunsetActive = true
-        }
+        var script = Quickshell.shellDir + "/services/sunset_control.sh"
+        Quickshell.execDetached([script, "toggle", String(root.sunsetTemp)])
+        sunsetRefreshDelay.restart()
     }
 
     function cycleSunsetTemp() {
         root.sunsetPresetIndex = (root.sunsetPresetIndex + 1) % root.sunsetPresets.length
         if (root.sunsetActive) {
-            Quickshell.execDetached(["sh", "-c", "pkill -x hyprsunset 2>/dev/null; hyprsunset -t " + root.sunsetTemp])
+            var script = Quickshell.shellDir + "/services/sunset_control.sh"
+            Quickshell.execDetached([script, "set", String(root.sunsetTemp)])
+            sunsetRefreshDelay.restart()
+        }
+    }
+
+    Timer {
+        id: sunsetRefreshDelay
+        interval: 350
+        repeat: false
+        onTriggered: {
+            if (!sunsetCheckProc.running) sunsetCheckProc.running = true
         }
     }
 

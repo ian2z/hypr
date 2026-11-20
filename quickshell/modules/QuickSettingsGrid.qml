@@ -11,7 +11,7 @@ GridLayout {
     columnSpacing: 8
     Layout.fillWidth: true
 
-    // 1. Conexão de Rede Cabeada / Ethernet
+    // 1. Conexão de Rede (Detecta Wi-Fi com SSID ou Cabeada Ethernet)
     QuickTile {
         icon: SystemService.netIcon
         title: SystemService.netTitle
@@ -19,8 +19,14 @@ GridLayout {
         active: SystemService.netType !== "none"
         hasSecondaryAction: true
         secondaryIcon: "󰅂"
-        onClicked: SystemService.openNetworkManager()
-        onSecondaryClicked: SystemService.refreshNetwork()
+        onClicked: {
+            if (SystemService.netType === "wifi" || SystemService.wifiEnabled) {
+                SystemService.toggleWifi()
+            } else {
+                SystemService.openNetworkManager()
+            }
+        }
+        onSecondaryClicked: SystemService.openNetworkManager()
     }
 
     // 2. Filtro Noturno (Hyprsunset - Luz Azul)
