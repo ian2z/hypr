@@ -311,17 +311,30 @@ Rectangle {
             NumberAnimation { duration: 180 }
         }
 
-        // Ícone da Notificação ou Sino
+        // Ícone / Imagem / Avatar da Notificação ou Sino Padrão
         Rectangle {
-            width: 36
-            height: 36
+            width: 38
+            height: 38
             radius: 10
             color: Theme.surface
             border.color: Theme.borderSubtle
             border.width: 1
+            clip: true
+
+            Image {
+                id: notifImg
+                anchors.fill: parent
+                source: NotificationService.iconOrImage
+                fillMode: Image.PreserveAspectCrop
+                asynchronous: true
+                visible: status === Image.Ready && source !== ""
+                smooth: true
+                mipmap: true
+            }
 
             Text {
                 anchors.centerIn: parent
+                visible: !notifImg.visible
                 text: NotificationService.urgency === 2 ? "󰅚" : "󰂚"
                 font.family: Theme.fontFamily
                 font.pixelSize: 18
