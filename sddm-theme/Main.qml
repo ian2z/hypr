@@ -70,7 +70,7 @@ Rectangle {
                 function updateTime() {
                     var d = new Date();
                     timeText.text = Qt.formatDateTime(d, "HH:mm");
-                    dateText.text = Qt.formatDateTime(d, "dddd, d MMMM");
+                    dateText.text = d.toLocaleDateString(Qt.locale("en_US"), "dddd, MMMM d");
                 }
             }
 
@@ -338,7 +338,7 @@ Rectangle {
                     }
 
                     Text {
-                        text: "ENTRAR"
+                        text: "LOGIN"
                         color: loginMouse.containsMouse || loginBtn.activeFocus ? colorBase : colorText
                         font.family: fontFamily
                         font.pixelSize: 12
