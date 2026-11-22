@@ -9,11 +9,12 @@ Rectangle {
 
     TextConstants { id: textConstants }
 
-    // Palette definitions matching ecosystem
+    // Palette definitions matching Dynamic Island & Quickshell
     readonly property color colorBase:      "#11111b"
     readonly property color colorSurface:   "#181825"
-    readonly property color colorHover:     "#313244"
+    readonly property color colorHover:     "#24253a"
     readonly property color colorBorder:    "#585b70"
+    readonly property color colorBorderSubtle: "#3b3e52"
     readonly property color colorText:      "#cdd6f4"
     readonly property color colorMuted:     "#9399b2"
     readonly property color colorAccent:    "#89b4fa"
@@ -33,48 +34,53 @@ Rectangle {
         smooth: true
     }
 
-    // Subtle Dark Backdrop Tint
+    // Subtle Dark Backdrop Tint (Frosted OLED Dark)
     Rectangle {
         anchors.fill: parent
         color: "#0b0b12"
-        opacity: 0.45
+        opacity: 0.50
     }
 
-    // Live Clock in Top-Right
-    Item {
+    // Live Clock in Top-Right (Floating Pill Widget)
+    Rectangle {
         id: clockContainer
         anchors.top: parent.top
         anchors.right: parent.right
-        anchors.margins: 40
-        width: clockCol.implicitWidth
-        height: clockCol.implicitHeight
+        anchors.margins: 36
+        width: clockCol.implicitWidth + 36
+        height: clockCol.implicitHeight + 20
+        radius: 20
+        color: "#d011111b"
+        border.color: colorBorder
+        border.width: 1
 
         Column {
             id: clockCol
-            spacing: 4
-            anchors.right: parent.right
+            spacing: 2
+            anchors.centerIn: parent
 
             Text {
                 id: timeText
                 color: colorText
                 font.family: fontFamily
-                font.pixelSize: 42
+                font.pixelSize: 32
                 font.bold: true
-                anchors.right: parent.right
+                anchors.horizontalCenter: parent.horizontalCenter
 
                 function updateTime() {
                     var d = new Date();
                     timeText.text = Qt.formatDateTime(d, "HH:mm");
-                    dateText.text = Qt.formatDateTime(d, "dddd, d MMMM yyyy");
+                    dateText.text = Qt.formatDateTime(d, "dddd, d MMMM");
                 }
             }
 
             Text {
                 id: dateText
-                color: colorMuted
+                color: colorAccent
                 font.family: fontFamily
-                font.pixelSize: 14
-                anchors.right: parent.right
+                font.pixelSize: 12
+                font.bold: true
+                anchors.horizontalCenter: parent.horizontalCenter
             }
 
             Timer {
@@ -87,35 +93,53 @@ Rectangle {
         }
     }
 
-    // Center Login Card
+    // Center Login Card (Dynamic Island Floating Rounded Glass Card)
     Rectangle {
         id: loginCard
         anchors.centerIn: parent
         width: 380
-        height: Math.max(440, cardLayout.implicitHeight + 56)
-        color: colorBase
-        opacity: 0.94
+        height: Math.max(460, cardLayout.implicitHeight + 56)
+        color: "#f011111b"
         border.color: colorBorder
         border.width: 1
-        radius: 0
+        radius: 24
 
         Column {
             id: cardLayout
             anchors.centerIn: parent
             width: parent.width - 56
-            spacing: 20
+            spacing: 18
 
-            // Header: User Icon / Title
-            Row {
-                spacing: 12
+            // Header: User Avatar Pill & Title
+            Column {
+                spacing: 10
                 anchors.horizontalCenter: parent.horizontalCenter
 
+                Rectangle {
+                    width: 56
+                    height: 56
+                    radius: 28
+                    color: colorSurface
+                    border.color: colorAccent
+                    border.width: 1
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: "󰄛"
+                        color: colorAccent
+                        font.family: fontFamily
+                        font.pixelSize: 26
+                    }
+                }
+
                 Text {
-                    text: "reach for the stars"
-                    color: colorAccent
+                    text: (typeof userModel !== "undefined" && userModel.lastUser) ? userModel.lastUser : "Welcome"
+                    color: colorText
                     font.family: fontFamily
-                    font.pixelSize: 18
-                    anchors.verticalCenter: parent.verticalCenter
+                    font.pixelSize: 15
+                    font.bold: true
+                    anchors.horizontalCenter: parent.horizontalCenter
                 }
             }
 
@@ -123,7 +147,7 @@ Rectangle {
             Rectangle {
                 width: parent.width
                 height: 1
-                color: colorBorder
+                color: colorBorderSubtle
             }
 
             // Username Field
@@ -143,36 +167,51 @@ Rectangle {
                 Rectangle {
                     id: userBox
                     width: parent.width
-                    height: 38
+                    height: 42
                     color: colorSurface
                     border.color: userInput.activeFocus ? colorAccent : colorBorder
                     border.width: 1
-                    radius: 0
+                    radius: height / 2
 
-                    TextInput {
-                        id: userInput
+                    Behavior on border.color { ColorAnimation { duration: 150 } }
+
+                    Row {
                         anchors.fill: parent
-                        anchors.leftMargin: 12
-                        anchors.rightMargin: 12
-                        verticalAlignment: TextInput.AlignVCenter
-                        color: colorText
-                        font.family: fontFamily
-                        font.pixelSize: 13
-                        text: (typeof userModel !== "undefined" && userModel.lastUser) ? userModel.lastUser : ""
-                        selectByMouse: true
-                        clip: true
+                        anchors.leftMargin: 14
+                        anchors.rightMargin: 14
+                        spacing: 10
 
-                        KeyNavigation.tab: passwordInput
-                        KeyNavigation.backtab: powerReboot
+                        Text {
+                            text: "󰀄"
+                            color: userInput.activeFocus ? colorAccent : colorMuted
+                            font.family: fontFamily
+                            font.pixelSize: 15
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
 
-                        Keys.onPressed: function(event) {
-                            if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-                                if (passwordInput.text === "") {
-                                    passwordInput.focus = true;
-                                } else {
-                                    sddm.login(userInput.text, passwordInput.text, root.sessionIndex);
+                        TextInput {
+                            id: userInput
+                            width: parent.width - 32
+                            anchors.verticalCenter: parent.verticalCenter
+                            color: colorText
+                            font.family: fontFamily
+                            font.pixelSize: 13
+                            text: (typeof userModel !== "undefined" && userModel.lastUser) ? userModel.lastUser : ""
+                            selectByMouse: true
+                            clip: true
+
+                            KeyNavigation.tab: passwordInput
+                            KeyNavigation.backtab: powerReboot
+
+                            Keys.onPressed: function(event) {
+                                if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
+                                    if (passwordInput.text === "") {
+                                        passwordInput.focus = true;
+                                    } else {
+                                        sddm.login(userInput.text, passwordInput.text, root.sessionIndex);
+                                    }
+                                    event.accepted = true;
                                 }
-                                event.accepted = true;
                             }
                         }
                     }
@@ -196,32 +235,47 @@ Rectangle {
                 Rectangle {
                     id: passwordBox
                     width: parent.width
-                    height: 38
+                    height: 42
                     color: colorSurface
                     border.color: passwordInput.activeFocus ? colorAccent : colorBorder
                     border.width: 1
-                    radius: 0
+                    radius: height / 2
 
-                    TextInput {
-                        id: passwordInput
+                    Behavior on border.color { ColorAnimation { duration: 150 } }
+
+                    Row {
                         anchors.fill: parent
-                        anchors.leftMargin: 12
-                        anchors.rightMargin: 12
-                        verticalAlignment: TextInput.AlignVCenter
-                        color: colorText
-                        font.family: fontFamily
-                        font.pixelSize: 13
-                        echoMode: TextInput.Password
-                        selectByMouse: true
-                        clip: true
+                        anchors.leftMargin: 14
+                        anchors.rightMargin: 14
+                        spacing: 10
 
-                        KeyNavigation.tab: loginBtn
-                        KeyNavigation.backtab: userInput
+                        Text {
+                            text: "󰌾"
+                            color: passwordInput.activeFocus ? colorAccent : colorMuted
+                            font.family: fontFamily
+                            font.pixelSize: 15
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
 
-                        Keys.onPressed: function(event) {
-                            if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-                                sddm.login(userInput.text, passwordInput.text, root.sessionIndex);
-                                event.accepted = true;
+                        TextInput {
+                            id: passwordInput
+                            width: parent.width - 32
+                            anchors.verticalCenter: parent.verticalCenter
+                            color: colorText
+                            font.family: fontFamily
+                            font.pixelSize: 13
+                            echoMode: TextInput.Password
+                            selectByMouse: true
+                            clip: true
+
+                            KeyNavigation.tab: loginBtn
+                            KeyNavigation.backtab: userInput
+
+                            Keys.onPressed: function(event) {
+                                if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
+                                    sddm.login(userInput.text, passwordInput.text, root.sessionIndex);
+                                    event.accepted = true;
+                                }
                             }
                         }
                     }
@@ -241,15 +295,17 @@ Rectangle {
                 wrapMode: Text.WordWrap
             }
 
-            // Login Button
+            // Login Button (Pill Button)
             Rectangle {
                 id: loginBtn
                 width: parent.width
-                height: 38
-                color: loginMouse.containsMouse || activeFocus ? colorAccent : "#212234"
+                height: 42
+                color: loginMouse.containsMouse || activeFocus ? colorAccent : "#24253a"
                 border.color: colorAccent
                 border.width: 1
-                radius: 0
+                radius: height / 2
+
+                Behavior on color { ColorAnimation { duration: 150 } }
 
                 KeyNavigation.tab: sessionSelector
                 KeyNavigation.backtab: passwordInput
@@ -282,7 +338,7 @@ Rectangle {
                     }
 
                     Text {
-                        text: "LOGIN"
+                        text: "ENTRAR"
                         color: loginMouse.containsMouse || loginBtn.activeFocus ? colorBase : colorText
                         font.family: fontFamily
                         font.pixelSize: 12
@@ -293,15 +349,18 @@ Rectangle {
                 }
             }
 
-            // Session Selector
+            // Session Selector (Pill Capsule)
             Rectangle {
                 id: sessionSelector
                 width: parent.width
-                height: 30
-                color: "transparent"
-                border.color: sessionMouse.containsMouse || activeFocus ? colorAccent : colorBorder
+                height: 32
+                color: sessionMouse.containsMouse ? colorHover : "transparent"
+                border.color: sessionMouse.containsMouse || activeFocus ? colorAccent : colorBorderSubtle
                 border.width: 1
-                radius: 0
+                radius: height / 2
+
+                Behavior on color { ColorAnimation { duration: 150 } }
+                Behavior on border.color { ColorAnimation { duration: 150 } }
 
                 KeyNavigation.tab: powerShutdown
                 KeyNavigation.backtab: loginBtn
@@ -362,21 +421,24 @@ Rectangle {
                 }
             }
 
-            // Bottom Power Controls
+            // Bottom Power Controls (Pill / Circular buttons)
             Row {
                 id: powerRow
                 anchors.horizontalCenter: parent.horizontalCenter
-                spacing: 12
+                spacing: 14
 
                 // Shutdown
                 Rectangle {
                     id: powerShutdown
-                    width: 44
-                    height: 36
-                    color: shutMouse.containsMouse || activeFocus ? "#f38ba8" : colorSurface
-                    border.color: colorBorder
+                    width: 38
+                    height: 38
+                    radius: height / 2
+                    color: shutMouse.containsMouse || activeFocus ? colorError : colorSurface
+                    border.color: shutMouse.containsMouse ? colorError : colorBorderSubtle
                     border.width: 1
-                    radius: 0
+
+                    Behavior on color { ColorAnimation { duration: 150 } }
+                    Behavior on border.color { ColorAnimation { duration: 150 } }
 
                     KeyNavigation.tab: powerReboot
                     KeyNavigation.backtab: sessionSelector
@@ -399,7 +461,7 @@ Rectangle {
                     Text {
                         anchors.centerIn: parent
                         text: "󰐥"
-                        color: shutMouse.containsMouse || powerShutdown.activeFocus ? colorBase : "#f38ba8"
+                        color: shutMouse.containsMouse || powerShutdown.activeFocus ? colorBase : colorError
                         font.family: fontFamily
                         font.pixelSize: 16
                     }
@@ -408,12 +470,15 @@ Rectangle {
                 // Reboot
                 Rectangle {
                     id: powerReboot
-                    width: 44
-                    height: 36
-                    color: rebMouse.containsMouse || activeFocus ? "#fab387" : colorSurface
-                    border.color: colorBorder
+                    width: 38
+                    height: 38
+                    radius: height / 2
+                    color: rebMouse.containsMouse || activeFocus ? colorWarning : colorSurface
+                    border.color: rebMouse.containsMouse ? colorWarning : colorBorderSubtle
                     border.width: 1
-                    radius: 0
+
+                    Behavior on color { ColorAnimation { duration: 150 } }
+                    Behavior on border.color { ColorAnimation { duration: 150 } }
 
                     KeyNavigation.tab: powerSuspend
                     KeyNavigation.backtab: powerShutdown
@@ -436,7 +501,7 @@ Rectangle {
                     Text {
                         anchors.centerIn: parent
                         text: "󰜉"
-                        color: rebMouse.containsMouse || powerReboot.activeFocus ? colorBase : "#fab387"
+                        color: rebMouse.containsMouse || powerReboot.activeFocus ? colorBase : colorWarning
                         font.family: fontFamily
                         font.pixelSize: 16
                     }
@@ -445,12 +510,15 @@ Rectangle {
                 // Suspend
                 Rectangle {
                     id: powerSuspend
-                    width: 44
-                    height: 36
-                    color: suspMouse.containsMouse || activeFocus ? "#89b4fa" : colorSurface
-                    border.color: colorBorder
+                    width: 38
+                    height: 38
+                    radius: height / 2
+                    color: suspMouse.containsMouse || activeFocus ? colorAccent : colorSurface
+                    border.color: suspMouse.containsMouse ? colorAccent : colorBorderSubtle
                     border.width: 1
-                    radius: 0
+
+                    Behavior on color { ColorAnimation { duration: 150 } }
+                    Behavior on border.color { ColorAnimation { duration: 150 } }
 
                     KeyNavigation.tab: userInput
                     KeyNavigation.backtab: powerReboot
@@ -473,7 +541,7 @@ Rectangle {
                     Text {
                         anchors.centerIn: parent
                         text: "󰒲"
-                        color: suspMouse.containsMouse || powerSuspend.activeFocus ? colorBase : "#89b4fa"
+                        color: suspMouse.containsMouse || powerSuspend.activeFocus ? colorBase : colorAccent
                         font.family: fontFamily
                         font.pixelSize: 16
                     }

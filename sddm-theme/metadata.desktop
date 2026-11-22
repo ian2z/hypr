@@ -1,9 +1,9 @@
 [SddmGreeterTheme]
-Name=Minimal Square
-Description=Minimalist square dark theme matching Waybar and Quickshell
+Name=Dynamic Island Glass
+Description=Modern rounded dark theme matching Dynamic Island and Quickshell
 Author=Ian
 Type=sddm-theme
-Version=1.0
+Version=2.0
 MainScript=Main.qml
 ConfigFile=theme.conf
 Theme-Id=minimal-square
